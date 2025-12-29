@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPAS AI應用規劃師 輔助小天使v1.1 By Force</title>
+    <title>iPAS AI應用規劃師 輔助小天使 pre-1.2 版 By Force Cheng 原力狐 老師</title>
     <!-- 引入 PapaParse 用於解析 CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
@@ -52,6 +52,8 @@
         .btn-outline { background-color: white; border: 1px solid var(--gray-300); color: var(--google-blue); }
         .btn-danger-outline { background-color: white; border: 1px solid var(--google-red); color: var(--google-red); }
         .btn-danger-outline:hover { background-color: #fce8e6; }
+        .btn-dark-outline { background-color: white; border: 1px solid #5f6368; color: #5f6368; }
+        .btn-dark-outline:hover { background-color: #f1f3f4; }
         .btn-block { width: 100%; }
         .btn-lg { padding: 16px; font-size: 18px; }
 
@@ -119,6 +121,20 @@
         .feedback-panel.wrong { border-left-color: var(--google-red); background: #fce8e6; }
         .source-text { font-size: 12px; color: #5f6368; margin-top: 8px; }
 
+        /* Keyboard Hint */
+        .keyboard-hint {
+            text-align: center; margin-top: 12px; font-size: 13px; color: #666;
+            display: flex; justify-content: center; align-items: center; gap: 15px;
+        }
+        .key-badge {
+            display: inline-block; padding: 2px 8px; border: 1px solid #ccc; border-radius: 4px; border-bottom-width: 2px;
+            background: #f8f9fa; font-family: monospace; font-weight: bold; font-size: 12px; color: #333;
+        }
+        /* Mobile optimization: hide hints on small screens */
+        @media (max-width: 600px) {
+            .keyboard-hint { display: none; }
+        }
+
         /* Result View */
         .score-circle {
             width: 120px; height: 120px; border-radius: 50%; border: 8px solid var(--google-blue);
@@ -136,9 +152,109 @@
         }
         .footer-link { color: var(--google-blue); text-decoration: none; font-weight: bold; }
         .footer-link:hover { text-decoration: underline; }
+
+        /* Footer Details */
+        footer details {
+            margin-top: 0px;
+        }
+        footer summary {
+            cursor: pointer;
+            color: #5f6368;
+            font-size: 13px;
+            font-weight: 500;
+            user-select: none;
+            outline: none;
+            text-align: center;
+            list-style: none; /* 標準隱藏三角形 */
+        }
+        footer summary::-webkit-details-marker {
+            display: none; /* Chrome 隱藏三角形 */
+        }
+        footer summary:hover {
+            color: var(--google-blue);
+            text-decoration: underline;
+        }
+        /* 自定義展開指示符 */
+        footer summary::after {
+            content: " ▼";
+            font-size: 0.8em;
+            vertical-align: middle;
+        }
+        footer details[open] summary::after {
+            content: " ▲";
+        }
+        footer .license-text {
+            text-align: left;
+            font-size: 13px;
+            color: #5f6368;
+            line-height: 1.8;
+            margin-top: 15px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            white-space: pre-line; /* 保留用戶的換行格式 */
+        }
+
+        /* --- PRINT STYLES --- */
+        .print-only-footer { display: none; }
+        
+        @media print {
+            body { background: white; color: black; }
+            
+            /* Hide non-printable elements */
+            header, .nav-bar, #loading-overlay, #view-browse, #view-setup, #view-exam {
+                display: none !important;
+            }
+            
+            /* Hide buttons inside the result view */
+            #view-result .btn, footer details {
+                display: none !important;
+            }
+
+            /* Ensure result view is visible */
+            #app, #view-result {
+                display: block !important;
+                visibility: visible;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Ensure cards look good in print (remove shadows if needed, simplify) */
+            .card, .review-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+            }
+
+            /* Special Print Footer */
+            .print-only-footer {
+                display: block !important;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                background: white;
+                padding: 10px;
+                border-top: 2px solid var(--google-blue);
+                font-size: 12px;
+                color: #333;
+                font-weight: bold;
+            }
+            
+            /* Adjust content spacing so it doesn't overlap footer */
+            body { padding-bottom: 50px; }
+        }
     </style>
 </head>
 <body>
+
+<!-- Print Footer (Visible only in Print Mode) -->
+<div class="print-only-footer">
+    iPAS AI應用規劃師 模擬測試結果｜介面與系統示範：Force Cheng 原力狐 老師
+</div>
 
 <!-- Loading Overlay -->
 <div id="loading-overlay">
@@ -149,9 +265,9 @@
 
 <header>
     <div style="padding: 16px; text-align: center; border-bottom: 1px solid #eee;">
-        <h2 style="margin:0; color: var(--google-blue);">iPAS AI應用規劃師 輔助小天使v1.0</h2>
+        <h2 style="margin:0; color: var(--google-blue);">iPAS AI應用規劃師 輔助小天使 pre-1.2 版</h2>
         <div style="margin-top: 4px;">
-            <small style="color: #666; font-weight: bold;">By Force (2025.12.29)</small>
+            <small style="color: #666; font-weight: bold;">By Force Cheng 原力狐 老師 (2025.12.29)</small>
         </div>
         <div style="margin-top: 8px; font-size: 12px;">
             <a href="https://www.ipas.org.tw/certification/AIAP/learning-resources" target="_blank" style="color: var(--google-blue); text-decoration: none;">
@@ -250,6 +366,7 @@
             <div class="question-text" id="exam-q-text">題目載入中...</div>
             <div class="options-grid" id="exam-options"></div>
             
+            <!-- Feedback Section -->
             <div id="exam-feedback" class="hidden">
                 <div id="feedback-panel" class="feedback-panel">
                     <div id="feedback-msg" style="font-weight: bold; font-size: 16px; margin-bottom: 4px;"></div>
@@ -259,7 +376,14 @@
                 <button class="btn btn-primary btn-block" style="margin-top: 16px;" onclick="app.nextQuestion()">下一題</button>
             </div>
 
+            <!-- Submit Button -->
             <button id="exam-submit-btn" class="btn btn-primary btn-block hidden" style="margin-top: 16px;" onclick="app.submitAnswer()">送出答案</button>
+
+            <!-- Keyboard Hint -->
+            <div class="keyboard-hint">
+                <div><span class="key-badge">1</span>-<span class="key-badge">4</span> 選擇答案</div>
+                <div><span class="key-badge">Enter</span> 送出 / 下一題</div>
+            </div>
         </div>
     </div>
 
@@ -293,7 +417,11 @@
         <div id="review-section" class="hidden">
             <div style="display:flex; justify-content:space-between; align-items:flex-end; margin: 30px 0 15px;">
                 <h3 style="color: #666; margin:0;">❌ 錯題回顧</h3>
-                <button class="btn btn-sm btn-danger-outline" onclick="app.downloadMistakesCSV()">📥 下載錯題複習 (CSV)</button>
+                <div style="display:flex; gap:10px;">
+                    <!-- New Print Button -->
+                    <button class="btn btn-sm btn-dark-outline" onclick="app.printResults()">🖨️ 列印 / 存為 PDF</button>
+                    <button class="btn btn-sm btn-danger-outline" onclick="app.downloadMistakesCSV()">📥 下載 CSV</button>
+                </div>
             </div>
             <div id="review-list"></div>
         </div>
@@ -302,16 +430,65 @@
 
 <footer>
     <div style="max-width: 800px; margin: 0 auto;">
-        <div onclick="document.getElementById('copyright-detail').classList.toggle('hidden')" style="cursor: pointer; color: var(--google-blue); text-decoration: underline;">
-            版權與免責聲明 (點擊展開)
-        </div>
-        <div id="copyright-detail" class="hidden" style="margin-top: 10px; line-height: 1.6;">
-            <p>官方歷史考題資料來源：<a href="https://www.ipas.org.tw/certification/AIAP/learning-resources" target="_blank" class="footer-link">https://www.ipas.org.tw/certification/AIAP/learning-resources</a></p>
-            <p>所有題目與內容之著作權歸原權利人所有。本頁僅提供學習測驗介面，不主張任何權利。</p>
-        </div>
-        <div style="margin-top: 10px; font-weight: bold; color: var(--google-blue);">
-            介面與系統整合：Force Cheng 原力狐老師（2025/12/29）
-        </div>
+        <details>
+            <summary>版權與使用聲明｜Copyright & Educational Use Notice</summary>
+            <div class="license-text">
+中文版
+【版權與使用聲明】
+
+本網站僅作為 AI 應用規劃、教學示範與測試用途，
+用以展示題庫資料在不同互動介面、閱讀模式與模擬考試流程下的應用方式。
+
+本網站所使用之題目內容，其原始資料來源屬於 iPAS 官方公開之當次試題／題庫公告，
+相關著作權與一切權利均歸原權利人所有。
+
+本網站不主張任何題目內容之著作權，
+亦不提供題庫內容之販售、散布、下載或任何形式之商業利用。
+
+本示範頁面僅針對介面設計、互動流程設計與教學應用方式進行展示，
+不代表任何官方立場，亦不構成任何考試結果或證照取得之保證。
+
+如原權利人對本頁內容之呈現方式有任何疑慮，
+請聯繫告知，本站將即時配合調整或下架相關內容。
+
+介面與系統示範：
+Force Cheng｜原力狐 老師
+年份：2025 / 2026
+
+--------------------------------------------------
+
+English Version
+【Copyright & Educational Use Notice】
+
+This website is created solely for AI application planning,
+educational demonstration, and testing purposes.
+
+It is intended to showcase how publicly available exam questions
+can be presented through different interface designs,
+reading modes, and simulated examination workflows.
+
+All question content displayed on this site originates from
+officially published iPAS examination materials.
+All copyrights and related rights belong to the original rights holders.
+
+This website does not claim ownership of the question content,
+nor does it provide redistribution, downloading,
+or any form of commercial use of the materials.
+
+The demonstration focuses exclusively on interface layout,
+interaction flow, and educational application design,
+and does not represent any official position
+or guarantee any examination or certification outcome.
+
+If the original rights holder has any concerns regarding the presentation
+of the content on this site, please contact us,
+and we will promptly make adjustments or remove the content as requested.
+
+Interface & System Demonstration:
+Force Cheng | Instructor “Force Fox”
+Year: 2025 / 2026
+            </div>
+        </details>
     </div>
 </footer>
 
@@ -356,6 +533,9 @@ const app = {
                 document.querySelector('#loading-overlay p').innerHTML = `<span style="color:red">連線失敗</span><br>無法讀取 Google Sheet。<br>請確認網路狀態。`;
             }
         });
+        
+        // Add Global Keydown Listener
+        document.addEventListener('keydown', (e) => this.handleKeydown(e));
     },
 
     processData: function(rawData) {
@@ -404,6 +584,32 @@ const app = {
         }
         this.state.mode = mode;
         window.scrollTo(0, 0);
+    },
+
+    // --- KEYBOARD SUPPORT ---
+    handleKeydown: function(e) {
+        if (this.state.mode !== 'exam_running') return;
+
+        // 1-4 for options
+        if (['1', '2', '3', '4'].includes(e.key)) {
+            const idx = parseInt(e.key) - 1;
+            const btn = document.querySelectorAll('#exam-options .option-btn')[idx];
+            if (btn) this.selectOption(idx, btn);
+        }
+
+        // Enter for Submit / Next
+        if (e.key === 'Enter') {
+            const ex = this.state.exam;
+            if (!ex.isSubmitted) {
+                // Not submitted yet: try to submit if option selected
+                if (ex.userChoice !== null) this.submitAnswer();
+            } else {
+                // Already submitted: go to next question or finish
+                // Check if the feedback Next button is visible
+                const nextBtn = document.querySelector('#exam-feedback button');
+                if (nextBtn) nextBtn.click();
+            }
+        }
     },
 
     // --- BROWSE LOGIC ---
@@ -671,29 +877,27 @@ const app = {
             return;
         }
 
-        // Prepare CSV Data
-        // Header
-        let csvContent = "\uFEFF"; // BOM for Excel chinese support
-        csvContent += "題號ID,科目,題目,您的選擇,正確答案,正確選項內容,來源檔名\n";
+        let csvContent = "\uFEFF"; 
+        csvContent += "編號(ID),題目,選項1,選項2,選項3,選項4,正確答案(1-4),使用者選項(1-4),來源檔名\n";
 
         wrongAnswers.forEach(item => {
             const q = item.qData;
-            // Escape quotes for CSV
             const safeStr = (str) => `"${String(str).replace(/"/g, '""')}"`;
             
             const row = [
                 safeStr(q.id),
-                safeStr(q.subject),
                 safeStr(q.question),
-                safeStr(q.options[item.userChoice]),
-                safeStr(item.userChoice + 1), // 1-based index for readability? or content? Let's use content mostly
-                safeStr(q.options[q.answerIndex]),
+                safeStr(q.options[0] || ""),
+                safeStr(q.options[1] || ""),
+                safeStr(q.options[2] || ""),
+                safeStr(q.options[3] || ""),
+                safeStr(q.answerIndex + 1),
+                safeStr(item.userChoice + 1),
                 safeStr(q.filename)
             ];
             csvContent += row.join(",") + "\n";
         });
 
-        // Trigger Download
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -702,6 +906,22 @@ const app = {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    },
+
+    printResults: function() {
+        // Set temp title for PDF filename
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const oldTitle = document.title;
+        
+        document.title = `iPAS_AI應用規劃師_模擬測試-${yyyy}年${mm}月${dd}日`;
+        
+        window.print();
+        
+        // Restore title (optional, browser handles this quickly usually)
+        setTimeout(() => { document.title = oldTitle; }, 1000);
     },
 
     shuffle: function(arr) {
