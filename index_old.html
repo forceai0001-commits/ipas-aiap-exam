@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPAS AI應用規劃師 輔助小天使v1.1 By Force</title>
+    <!-- 引入 PapaParse 用於解析 CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        /* --- Google Fonts & Variables --- */
+        :root {
+            --google-blue: #4285F4;
+            --google-red: #EA4335;
+            --google-yellow: #FBBC05;
+            --google-green: #34A853;
+            --gray-100: #f1f3f4;
+            --gray-300: #dadce0;
+            --gray-800: #202124;
+            --shadow-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { margin: 0; background-color: var(--gray-100); color: var(--gray-800); padding-bottom: 80px; }
+
+        /* --- Components --- */
+        .container { max-width: 800px; margin: 0 auto; padding: 16px; }
+        .hidden { display: none !important; }
+
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 20px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3; border-top: 4px solid var(--google-blue);
+            border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 10px 24px; border-radius: 4px; border: none; cursor: pointer;
+            font-size: 16px; font-weight: 500; transition: background 0.2s;
+            text-decoration: none; user-select: none;
+        }
+        .btn-sm { padding: 6px 12px; font-size: 14px; }
+        .btn-primary { background-color: var(--google-blue); color: white; box-shadow: var(--shadow-1); }
+        .btn-primary:active { transform: translateY(1px); }
+        .btn-outline { background-color: white; border: 1px solid var(--gray-300); color: var(--google-blue); }
+        .btn-danger-outline { background-color: white; border: 1px solid var(--google-red); color: var(--google-red); }
+        .btn-danger-outline:hover { background-color: #fce8e6; }
+        .btn-block { width: 100%; }
+        .btn-lg { padding: 16px; font-size: 18px; }
+
+        /* Inputs */
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; color: #5f6368; }
+        select, input[type="number"] {
+            width: 100%; padding: 12px; border: 1px solid var(--gray-300);
+            border-radius: 4px; font-size: 16px; background: white;
+        }
+
+        /* Cards */
+        .card {
+            background: white; border-radius: 8px; padding: 24px;
+            margin-bottom: 16px; box-shadow: var(--shadow-1);
+        }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .badge {
+            padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold;
+            background: var(--gray-300); color: #555;
+        }
+        .badge-subject { background: #e8f0fe; color: var(--google-blue); }
+        .badge-id { background: #fce8e6; color: var(--google-red); }
+
+        /* Review Card Style */
+        .review-card {
+            background: white; border-radius: 8px; padding: 20px;
+            margin-bottom: 16px; box-shadow: var(--shadow-1);
+            border-left: 5px solid var(--google-red); /* Red indicator for wrong answers */
+        }
+
+        /* Navigation */
+        header { background: white; box-shadow: var(--shadow-1); position: sticky; top: 0; z-index: 100; }
+        .nav-bar { display: flex; max-width: 800px; margin: 0 auto; }
+        .nav-item {
+            flex: 1; text-align: center; padding: 16px; cursor: pointer;
+            font-weight: 500; color: #5f6368; border-bottom: 3px solid transparent;
+        }
+        .nav-item.active { color: var(--google-blue); border-bottom-color: var(--google-blue); }
+
+        /* Question Styles */
+        .question-text { font-size: 18px; line-height: 1.5; margin-bottom: 20px; font-weight: 500; }
+        .options-grid { display: grid; gap: 12px; }
+        .option-btn {
+            width: 100%; text-align: left; padding: 16px; border: 2px solid var(--gray-300);
+            border-radius: 8px; background: white; cursor: pointer; font-size: 16px;
+            transition: all 0.2s; position: relative;
+        }
+        .option-btn:hover { border-color: var(--google-blue); background: #f8f9fa; }
+        .option-btn.selected { border-color: var(--google-blue); background: #e8f0fe; color: var(--google-blue); font-weight: bold; }
+        
+        /* Feedback & Review Styles */
+        .option-btn.correct { border-color: var(--google-green); background: #e6f4ea; color: #0d652d; font-weight: bold; }
+        .option-btn.wrong { border-color: var(--google-red); background: #fce8e6; color: #c5221f; text-decoration: line-through; opacity: 0.8; }
+        
+        /* For Browse Mode Answers */
+        .browse-opt { padding: 10px; border-radius: 4px; margin-bottom: 8px; border: 1px solid #ddd; background: #f8f9fa; }
+        .browse-opt.is-ans { border-color: var(--google-green); background: #e6f4ea; color: #0d652d; font-weight: bold; }
+
+        /* Feedback Panel */
+        .feedback-panel {
+            margin-top: 16px; padding: 16px; border-radius: 8px; background: #f1f3f4; border-left: 5px solid var(--google-blue);
+        }
+        .feedback-panel.correct { border-left-color: var(--google-green); background: #e6f4ea; }
+        .feedback-panel.wrong { border-left-color: var(--google-red); background: #fce8e6; }
+        .source-text { font-size: 12px; color: #5f6368; margin-top: 8px; }
+
+        /* Result View */
+        .score-circle {
+            width: 120px; height: 120px; border-radius: 50%; border: 8px solid var(--google-blue);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            margin: 0 auto 16px; font-size: 32px; font-weight: bold; color: var(--google-blue);
+        }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; text-align: center; }
+        .stat-box { padding: 12px; border-radius: 8px; background: white; box-shadow: var(--shadow-1); }
+        .stat-value { font-size: 20px; font-weight: bold; }
+
+        /* Footer */
+        footer {
+            margin-top: 40px; padding: 20px; background: white; border-top: 1px solid var(--gray-300);
+            font-size: 12px; color: #5f6368; text-align: center;
+        }
+        .footer-link { color: var(--google-blue); text-decoration: none; font-weight: bold; }
+        .footer-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <p style="margin-top: 16px; font-weight: bold; color: #555;">正在連線至 Google 題庫...</p>
+    <p style="font-size: 12px; color: #999;">(請保持網路連線)</p>
+</div>
+
+<header>
+    <div style="padding: 16px; text-align: center; border-bottom: 1px solid #eee;">
+        <h2 style="margin:0; color: var(--google-blue);">iPAS AI應用規劃師 輔助小天使v1.0</h2>
+        <div style="margin-top: 4px;">
+            <small style="color: #666; font-weight: bold;">By Force (2025.12.29)</small>
+        </div>
+        <div style="margin-top: 8px; font-size: 12px;">
+            <a href="https://www.ipas.org.tw/certification/AIAP/learning-resources" target="_blank" style="color: var(--google-blue); text-decoration: none;">
+                🔗 官方歷史考題資料來源
+            </a>
+        </div>
+    </div>
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="app.switchMode('browse')">題庫閱覽</div>
+        <div class="nav-item" onclick="app.switchMode('setup')">模擬測驗</div>
+    </div>
+</header>
+
+<div id="app" class="container hidden">
+    <!-- View: Browse -->
+    <div id="view-browse">
+        <div class="card">
+            <div class="form-group">
+                <label>選擇科目</label>
+                <select id="browse-subject" onchange="app.filterBrowseData(true)">
+                    <option value="ALL">全部科目</option>
+                    <option value="A1">A1 - 人工智慧基礎概論</option>
+                    <option value="A2">A2 - 法律與規範</option>
+                    <option value="B1">B1 - 機器學習</option>
+                    <option value="B2">B2 - 深度學習</option>
+                    <option value="B3">B3 - 技術與應用</option>
+                </select>
+            </div>
+            <div class="stat-grid">
+                <div class="form-group" style="margin:0;">
+                    <label>排序</label>
+                    <select id="browse-order" onchange="app.filterBrowseData(true)">
+                        <option value="seq">順序</option>
+                        <option value="rand">隨機</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin:0; display:flex; align-items:center;">
+                   <label style="margin:0; cursor: pointer;">
+                        <input type="checkbox" id="browse-show-ans" onchange="app.renderBrowseChunk()"> 全部顯示答案
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top:10px; text-align:right;">
+                <span id="browse-count" class="badge">共 0 題</span>
+            </div>
+        </div>
+        <div id="browse-list">
+            <!-- Dynamic Content -->
+        </div>
+        <button id="btn-load-more" class="btn btn-outline btn-block hidden" onclick="app.renderBrowseChunk()">
+            載入更多題目...
+        </button>
+    </div>
+
+    <!-- View: Exam Setup -->
+    <div id="view-setup" class="hidden">
+        <div class="card">
+            <h3 style="text-align: center; margin-top: 0;">測驗設定</h3>
+            <div class="form-group">
+                <label>測驗科目</label>
+                <select id="exam-subject">
+                    <option value="ALL">全部科目 (綜合測驗)</option>
+                    <option value="A1">A1</option>
+                    <option value="A2">A2</option>
+                    <option value="B1">B1</option>
+                    <option value="B2">B2</option>
+                    <option value="B3">B3</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>出題順序</label>
+                <select id="exam-order">
+                    <option value="rand">隨機出題 (模擬考模式)</option>
+                    <option value="seq">依題號順序</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>測驗題數</label>
+                <input type="number" id="exam-limit" value="50" min="5" max="250">
+            </div>
+            <button class="btn btn-primary btn-block btn-lg" onclick="app.startExam()">開始測驗</button>
+        </div>
+    </div>
+
+    <!-- View: Exam Running -->
+    <div id="view-exam" class="hidden">
+        <div style="display:flex; justify-content:space-between; background:var(--google-blue); color:white; padding:8px 16px; border-radius:8px 8px 0 0; font-weight:bold; font-size:14px;">
+            <span id="exam-header-info">綜合 / 隨機</span>
+            <span id="exam-score-info">得分: 0</span>
+        </div>
+        <div class="card" style="border-radius: 0 0 8px 8px;">
+            <div class="card-header">
+                <span class="badge badge-id" id="exam-q-id">ID: --</span>
+                <span style="font-weight: bold; color: #5f6368;" id="exam-progress">1 / 50</span>
+            </div>
+            <div class="question-text" id="exam-q-text">題目載入中...</div>
+            <div class="options-grid" id="exam-options"></div>
+            
+            <div id="exam-feedback" class="hidden">
+                <div id="feedback-panel" class="feedback-panel">
+                    <div id="feedback-msg" style="font-weight: bold; font-size: 16px; margin-bottom: 4px;"></div>
+                    <div id="feedback-detail"></div>
+                </div>
+                <div class="source-text" id="feedback-source"></div>
+                <button class="btn btn-primary btn-block" style="margin-top: 16px;" onclick="app.nextQuestion()">下一題</button>
+            </div>
+
+            <button id="exam-submit-btn" class="btn btn-primary btn-block hidden" style="margin-top: 16px;" onclick="app.submitAnswer()">送出答案</button>
+        </div>
+    </div>
+
+    <!-- View: Result -->
+    <div id="view-result" class="hidden">
+        <div class="card">
+            <h3 style="text-align: center; margin-top: 0;">測驗結束</h3>
+            <div class="score-circle">
+                <span id="result-score">0</span>
+                <span style="font-size: 14px; font-weight: normal;">總分</span>
+            </div>
+            
+            <div class="stat-grid">
+                <div class="stat-box">
+                    <div class="stat-label">答對</div>
+                    <div class="stat-value" style="color: var(--google-green);" id="result-correct">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">答錯</div>
+                    <div class="stat-value" style="color: var(--google-red);" id="result-wrong">0</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 24px; gap: 10px; display: grid;">
+                <button class="btn btn-primary btn-block" onclick="app.switchMode('setup')">重新測驗</button>
+                <button class="btn btn-outline btn-block" onclick="app.switchMode('browse')">回到題庫</button>
+            </div>
+        </div>
+
+        <!-- Wrong Questions Review Section -->
+        <div id="review-section" class="hidden">
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin: 30px 0 15px;">
+                <h3 style="color: #666; margin:0;">❌ 錯題回顧</h3>
+                <button class="btn btn-sm btn-danger-outline" onclick="app.downloadMistakesCSV()">📥 下載錯題複習 (CSV)</button>
+            </div>
+            <div id="review-list"></div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div style="max-width: 800px; margin: 0 auto;">
+        <div onclick="document.getElementById('copyright-detail').classList.toggle('hidden')" style="cursor: pointer; color: var(--google-blue); text-decoration: underline;">
+            版權與免責聲明 (點擊展開)
+        </div>
+        <div id="copyright-detail" class="hidden" style="margin-top: 10px; line-height: 1.6;">
+            <p>官方歷史考題資料來源：<a href="https://www.ipas.org.tw/certification/AIAP/learning-resources" target="_blank" class="footer-link">https://www.ipas.org.tw/certification/AIAP/learning-resources</a></p>
+            <p>所有題目與內容之著作權歸原權利人所有。本頁僅提供學習測驗介面，不主張任何權利。</p>
+        </div>
+        <div style="margin-top: 10px; font-weight: bold; color: var(--google-blue);">
+            介面與系統整合：Force Cheng 原力狐老師（2025/12/29）
+        </div>
+    </div>
+</footer>
+
+<script>
+// --- CONFIGURATION ---
+const GOOGLE_SHEET_ID = "1yd94GHcO5WTGkShyKhud_yCYBzjoaOZtGlk3hWsvci8";
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv`;
+
+// Global Data Container
+let questions = [];
+
+const app = {
+    state: {
+        mode: 'browse',
+        browse: {
+            fullList: [],
+            currentList: [],
+            renderedCount: 0,
+            chunkSize: 10 // 分批渲染：10 題
+        },
+        exam: {
+            list: [],
+            currentIdx: 0,
+            answers: [],
+            scorePerQ: 0,
+            userChoice: null,
+            isSubmitted: false
+        }
+    },
+
+    init: async function() {
+        Papa.parse(CSV_URL, {
+            download: true, header: true, skipEmptyLines: true,
+            complete: (results) => {
+                this.processData(results.data);
+                document.getElementById('loading-overlay').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                this.filterBrowseData(true);
+            },
+            error: (err) => {
+                console.error(err);
+                document.querySelector('#loading-overlay p').innerHTML = `<span style="color:red">連線失敗</span><br>無法讀取 Google Sheet。<br>請確認網路狀態。`;
+            }
+        });
+    },
+
+    processData: function(rawData) {
+        questions = [];
+        rawData.forEach((row, index) => {
+            if (!row['編號'] && !row['id']) return;
+            try {
+                const id = row['編號'] || row['id'];
+                let ansRaw = row['正確答案'] || row['answer'];
+                let ansIdx = -1;
+                if (ansRaw) {
+                    ansRaw = String(ansRaw).trim();
+                    ansIdx = parseInt(ansRaw) - 1;
+                }
+                questions.push({
+                    id: String(id).trim(),
+                    subject: String(row['分類'] || row['subject'] || "").trim(),
+                    qno: parseInt(row['題號'] || row['qno']) || 0,
+                    filename: String(row['文件名稱'] || row['filename'] || "").trim(),
+                    question: String(row['題目'] || row['question'] || "").trim(),
+                    options: [
+                        String(row['選項1'] || row['opt1'] || "").trim(),
+                        String(row['選項2'] || row['opt2'] || "").trim(),
+                        String(row['選項3'] || row['opt3'] || "").trim(),
+                        String(row['選項4'] || row['opt4'] || "").trim()
+                    ],
+                    answerIndex: ansIdx
+                });
+            } catch (err) { console.warn(`Row ${index} format error`, err); }
+        });
+    },
+
+    switchMode: function(mode) {
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('#app > div').forEach(el => el.classList.add('hidden'));
+
+        if (mode === 'browse') {
+            document.querySelector('.nav-item:nth-child(1)').classList.add('active');
+            document.getElementById('view-browse').classList.remove('hidden');
+        } else if (mode === 'setup') {
+            document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+            document.getElementById('view-setup').classList.remove('hidden');
+        } else if (mode === 'exam_running' || mode === 'result') {
+            document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+            document.getElementById(mode === 'result' ? 'view-result' : 'view-exam').classList.remove('hidden');
+        }
+        this.state.mode = mode;
+        window.scrollTo(0, 0);
+    },
+
+    // --- BROWSE LOGIC ---
+    filterBrowseData: function(reset = false) {
+        const subject = document.getElementById('browse-subject').value;
+        const order = document.getElementById('browse-order').value;
+        let list = questions.filter(q => subject === 'ALL' || q.subject === subject);
+        
+        if (order === 'rand') list = this.shuffle([...list]); 
+        else list.sort((a, b) => a.qno - b.qno);
+
+        this.state.browse.currentList = list;
+        document.getElementById('browse-count').innerText = `共 ${list.length} 題`;
+
+        if (reset) {
+            this.state.browse.renderedCount = 0;
+            document.getElementById('browse-list').innerHTML = '';
+            this.renderBrowseChunk();
+        }
+    },
+
+    renderBrowseChunk: function() {
+        const { currentList, renderedCount, chunkSize } = this.state.browse;
+        const container = document.getElementById('browse-list');
+        const showAllAns = document.getElementById('browse-show-ans').checked;
+        const btnLoadMore = document.getElementById('btn-load-more');
+
+        // Toggle handling
+        if (event && event.target && event.target.id === 'browse-show-ans') {
+            container.innerHTML = '';
+            this.appendItemsToBrowse(currentList.slice(0, Math.max(chunkSize, renderedCount)), showAllAns);
+            return; 
+        }
+
+        const nextBatch = currentList.slice(renderedCount, renderedCount + chunkSize);
+        this.appendItemsToBrowse(nextBatch, showAllAns);
+        this.state.browse.renderedCount += nextBatch.length;
+
+        if (this.state.browse.renderedCount < currentList.length) {
+            btnLoadMore.classList.remove('hidden');
+            btnLoadMore.innerText = `載入更多... (剩餘 ${currentList.length - this.state.browse.renderedCount} 題)`;
+        } else {
+            btnLoadMore.classList.add('hidden');
+        }
+    },
+
+    appendItemsToBrowse: function(items, showAllAns) {
+        const container = document.getElementById('browse-list');
+        items.forEach((q, qIndex) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            // Build options
+            let optionsHtml = '';
+            q.options.forEach((opt, idx) => {
+                let classes = 'browse-opt';
+                if (showAllAns && idx === q.answerIndex) classes += ' is-ans';
+                optionsHtml += `<div class="${classes}" data-opt-idx="${idx}">${opt}</div>`;
+            });
+
+            const showBtnId = `btn-show-${q.id}-${Math.random().toString(36).substr(2,5)}`; 
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <div>
+                        <span class="badge badge-subject">${q.subject}</span>
+                        <span class="badge badge-id">${q.id}</span>
+                    </div>
+                    ${!showAllAns ? `<button id="${showBtnId}" class="btn btn-outline btn-sm" onclick="app.revealAnswer(this, ${q.answerIndex})">👁️ 查看答案</button>` : ''}
+                </div>
+                <div class="question-text"><span style="color:var(--google-blue);">Q${q.qno}.</span> ${q.question}</div>
+                <div class="browse-opts-container">${optionsHtml}</div>
+            `;
+            container.appendChild(card);
+        });
+    },
+
+    revealAnswer: function(btn, correctIdx) {
+        const cardBody = btn.closest('.card').querySelector('.browse-opts-container');
+        const opts = cardBody.querySelectorAll('.browse-opt');
+        if(opts[correctIdx]) opts[correctIdx].classList.add('is-ans');
+        btn.style.display = 'none';
+    },
+
+    // --- EXAM LOGIC ---
+    startExam: function() {
+        const subject = document.getElementById('exam-subject').value;
+        const order = document.getElementById('exam-order').value;
+        let limit = parseInt(document.getElementById('exam-limit').value);
+        let list = questions.filter(q => subject === 'ALL' || q.subject === subject);
+        
+        if (list.length === 0) return alert("無題目可出");
+        if (limit > list.length) limit = list.length;
+        if (order === 'rand') list = this.shuffle([...list]);
+        else list.sort((a, b) => a.qno - b.qno);
+
+        list = list.slice(0, limit);
+
+        this.state.exam = {
+            list: list,
+            currentIdx: 0,
+            answers: [],
+            scorePerQ: 100 / list.length,
+            userChoice: null,
+            isSubmitted: false
+        };
+
+        const modeName = (subject === 'ALL' ? '綜合' : subject);
+        document.getElementById('exam-header-info').innerText = `${modeName} / ${limit}題`;
+        this.switchMode('exam_running');
+        this.renderExamQuestion();
+    },
+
+    renderExamQuestion: function() {
+        const ex = this.state.exam;
+        const q = ex.list[ex.currentIdx];
+
+        document.getElementById('exam-feedback').classList.add('hidden');
+        const submitBtn = document.getElementById('exam-submit-btn');
+        submitBtn.classList.remove('hidden');
+        submitBtn.disabled = true;
+        submitBtn.innerText = ex.currentIdx === ex.list.length - 1 ? "交卷" : "送出答案";
+        
+        ex.userChoice = null;
+        ex.isSubmitted = false;
+
+        document.getElementById('exam-q-id').innerText = `ID: ${q.id}`;
+        document.getElementById('exam-progress').innerText = `${ex.currentIdx + 1} / ${ex.list.length}`;
+        document.getElementById('exam-score-info').innerText = `得分: ${(ex.answers.filter(a=>a.isCorrect).length * ex.scorePerQ).toFixed(1)}`;
+        document.getElementById('exam-q-text').innerHTML = `<span style="color:var(--google-blue);">Q${q.qno}.</span> ${q.question}`;
+
+        const grid = document.getElementById('exam-options');
+        grid.innerHTML = '';
+        q.options.forEach((opt, idx) => {
+            const btn = document.createElement('div');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => app.selectOption(idx, btn);
+            grid.appendChild(btn);
+        });
+    },
+
+    selectOption: function(idx, btnElement) {
+        if (this.state.exam.isSubmitted) return;
+        this.state.exam.userChoice = idx;
+        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btnElement.classList.add('selected');
+        document.getElementById('exam-submit-btn').disabled = false;
+    },
+
+    submitAnswer: function() {
+        const ex = this.state.exam;
+        if (ex.userChoice === null) return;
+        ex.isSubmitted = true;
+        
+        const q = ex.list[ex.currentIdx];
+        const isCorrect = (ex.userChoice === q.answerIndex);
+        
+        ex.answers.push({ 
+            qData: q, 
+            userChoice: ex.userChoice,
+            isCorrect: isCorrect 
+        });
+
+        document.getElementById('exam-submit-btn').classList.add('hidden');
+        document.getElementById('exam-feedback').classList.remove('hidden');
+        
+        const optBtns = document.querySelectorAll('.option-btn');
+        optBtns[q.answerIndex].classList.add('correct');
+        
+        const fbPanel = document.getElementById('feedback-panel');
+        const fbMsg = document.getElementById('feedback-msg');
+        
+        if (!isCorrect) {
+            optBtns[ex.userChoice].classList.add('wrong');
+            fbMsg.innerText = "答錯了！";
+            fbMsg.style.color = "var(--google-red)";
+            fbPanel.className = 'feedback-panel wrong';
+            document.getElementById('feedback-detail').innerText = `正確答案：${q.options[q.answerIndex]}`;
+        } else {
+            fbMsg.innerText = "答對了！";
+            fbMsg.style.color = "var(--google-green)";
+            fbPanel.className = 'feedback-panel correct';
+            document.getElementById('feedback-detail').innerText = "";
+        }
+        
+        document.getElementById('feedback-source').innerText = `出處：${q.filename || '未知'}`;
+        document.getElementById('exam-score-info').innerText = `得分: ${(ex.answers.filter(a=>a.isCorrect).length * ex.scorePerQ).toFixed(1)}`;
+
+        const nextBtn = document.querySelector('#exam-feedback button');
+        if (ex.currentIdx === ex.list.length - 1) {
+            nextBtn.innerText = "查看結果";
+            nextBtn.onclick = () => app.finishExam();
+        } else {
+            nextBtn.innerText = "下一題";
+            nextBtn.onclick = () => app.nextQuestion();
+        }
+    },
+
+    nextQuestion: function() {
+        this.state.exam.currentIdx++;
+        this.renderExamQuestion();
+        window.scrollTo(0,0);
+    },
+
+    finishExam: function() {
+        const ex = this.state.exam;
+        const total = ex.list.length;
+        const correct = ex.answers.filter(a => a.isCorrect).length;
+        const wrong = total - correct;
+        
+        document.getElementById('result-score').innerText = (correct * ex.scorePerQ).toFixed(0);
+        document.getElementById('result-correct').innerText = correct;
+        document.getElementById('result-wrong').innerText = wrong;
+        
+        // Render Review
+        const reviewContainer = document.getElementById('review-list');
+        const reviewSection = document.getElementById('review-section');
+        reviewContainer.innerHTML = '';
+        
+        const wrongAnswers = ex.answers.filter(a => !a.isCorrect);
+        
+        if (wrongAnswers.length > 0) {
+            reviewSection.classList.remove('hidden');
+            wrongAnswers.forEach((item, idx) => {
+                const q = item.qData;
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                
+                let optsHtml = '';
+                q.options.forEach((opt, optIdx) => {
+                    let style = 'padding:8px; border-radius:4px; margin-bottom:4px; border:1px solid #eee;';
+                    let prefix = '';
+                    if (optIdx === q.answerIndex) {
+                        style = 'background:#e6f4ea; border-color:var(--google-green); color:#0d652d; font-weight:bold;';
+                        prefix = '✅ 正確：';
+                    } else if (optIdx === item.userChoice) {
+                        style = 'background:#fce8e6; border-color:var(--google-red); color:#c5221f; text-decoration:line-through;';
+                        prefix = '❌ 您的選擇：';
+                    }
+                    optsHtml += `<div style="${style}">${prefix}${opt}</div>`;
+                });
+
+                card.innerHTML = `
+                    <div style="font-size:14px; color:#666; margin-bottom:8px;">${q.id} | ${q.subject}</div>
+                    <div style="font-weight:bold; margin-bottom:12px;">${q.question}</div>
+                    <div>${optsHtml}</div>
+                    <div style="font-size:12px; color:#999; margin-top:12px; text-align:right;">來源：${q.filename}</div>
+                `;
+                reviewContainer.appendChild(card);
+            });
+        } else {
+            reviewSection.classList.add('hidden');
+        }
+
+        this.switchMode('result');
+    },
+
+    downloadMistakesCSV: function() {
+        const ex = this.state.exam;
+        const wrongAnswers = ex.answers.filter(a => !a.isCorrect);
+        
+        if (wrongAnswers.length === 0) {
+            alert("本次測驗沒有錯題，太棒了！");
+            return;
+        }
+
+        // Prepare CSV Data
+        // Header
+        let csvContent = "\uFEFF"; // BOM for Excel chinese support
+        csvContent += "題號ID,科目,題目,您的選擇,正確答案,正確選項內容,來源檔名\n";
+
+        wrongAnswers.forEach(item => {
+            const q = item.qData;
+            // Escape quotes for CSV
+            const safeStr = (str) => `"${String(str).replace(/"/g, '""')}"`;
+            
+            const row = [
+                safeStr(q.id),
+                safeStr(q.subject),
+                safeStr(q.question),
+                safeStr(q.options[item.userChoice]),
+                safeStr(item.userChoice + 1), // 1-based index for readability? or content? Let's use content mostly
+                safeStr(q.options[q.answerIndex]),
+                safeStr(q.filename)
+            ];
+            csvContent += row.join(",") + "\n";
+        });
+
+        // Trigger Download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `review_mistakes_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    },
+
+    shuffle: function(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+};
+
+window.onload = app.init.bind(app);
+</script>
+</body>
+</html>
