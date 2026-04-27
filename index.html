@@ -279,6 +279,31 @@
             border-color: var(--google-blue);
             background: #f5f8ff;
         }
+        .order-actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+        .order-btn {
+            min-height: 50px;
+            padding: 11px 12px;
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            background: #fff;
+            color: #5f6368;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 900;
+        }
+        .order-btn.active {
+            border-color: var(--google-blue);
+            background: #e8f0fe;
+            color: #174ea6;
+            box-shadow: var(--shadow-1);
+        }
+        .order-btn:hover {
+            border-color: var(--google-blue);
+        }
         .result-breakdown {
             margin-top: 18px;
             border: 1px solid var(--gray-300);
@@ -437,7 +462,7 @@
             text-decoration: underline;
         }
         .header-toggle {
-            display: none;
+            display: inline-flex;
             margin: 8px auto 0;
             padding: 6px 10px;
             border: 1px solid var(--gray-300);
@@ -447,6 +472,29 @@
             font-size: 12px;
             font-weight: 800;
             cursor: pointer;
+        }
+        header.header-collapsed .site-header-panel {
+            padding: 8px 16px;
+        }
+        header.header-collapsed .site-title {
+            font-size: 18px;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        header.header-collapsed .site-title-main,
+        header.header-collapsed .site-title-sub {
+            display: inline;
+        }
+        header.header-collapsed .site-meta,
+        header.header-collapsed .site-links,
+        header.header-collapsed .update-note {
+            display: none;
+        }
+        header.header-collapsed .header-toggle {
+            margin-top: 5px;
+            padding: 4px 9px;
         }
         .update-note {
             max-width: 800px;
@@ -1090,9 +1138,6 @@
             .update-note-foot {
                 margin-top: 4px;
             }
-            .header-toggle {
-                display: inline-flex;
-            }
             header.header-collapsed .site-header-panel {
                 padding: 8px 12px;
             }
@@ -1408,10 +1453,11 @@
             </div>
             <div class="form-group">
                 <label>出題順序</label>
-                <select id="exam-order">
-                    <option value="rand">隨機出題 (模擬考模式)</option>
-                    <option value="seq">依題號順序</option>
-                </select>
+                <input type="hidden" id="exam-order" value="rand">
+                <div class="order-actions" aria-label="出題順序">
+                    <button class="order-btn active" type="button" data-exam-order="rand" onclick="app.setExamOrder('rand')">隨機出題</button>
+                    <button class="order-btn" type="button" data-exam-order="seq" onclick="app.setExamOrder('seq')">依題號順序</button>
+                </div>
             </div>
             <div class="form-group">
                 <label>測驗題數</label>
@@ -2123,6 +2169,15 @@ const app = {
         this.updateExamLimitBounds();
     },
 
+    setExamOrder: function(order) {
+        const input = document.getElementById('exam-order');
+        if (!input) return;
+        input.value = order;
+        document.querySelectorAll('[data-exam-order]').forEach(button => {
+            button.classList.toggle('active', button.dataset.examOrder === order);
+        });
+    },
+
     escapeHtml: function(value) {
         return String(value)
             .replace(/&/g, '&amp;')
@@ -2213,7 +2268,7 @@ const app = {
 
     collapseHeaderForMobile: function() {
         const header = document.getElementById('site-header');
-        if (!header || !window.matchMedia('(max-width: 600px)').matches) return;
+        if (!header) return;
         header.classList.add('header-collapsed');
         this.updateHeaderToggleText();
     },
