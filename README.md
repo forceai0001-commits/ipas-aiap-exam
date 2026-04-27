@@ -49,6 +49,13 @@ https://docs.google.com/spreadsheets/d/1Gc3tRwERo0kMgUYQqfP747-3IoaN8yiTXPlsSIhC
 | SEO / GEO | 未整理 | 已加入 SEO、Open Graph、Twitter Card、Schema.org、GEO metadata |
 | 品牌資訊 | Force Cheng 原力狐老師 | Falo x Force 原力狐老師 |
 
+## v2.01 小更新
+
+- 科目與年份預設改為全部不勾選，避免一進入頁面就誤以為已經選好測驗範圍
+- 題庫閱覽與模擬測驗都增加「全部選擇 / 全部取消」
+- 多組題型混合測驗時，系統會盡量平均分配各題型題數
+- 測驗結果新增題型分布與答題表，可檢查每一組題型的出題數、答對數、答錯數與正確率
+
 ## 版本封存
 
 ```text
@@ -64,14 +71,16 @@ version/
 ```text
 .
 ├── index.html
-├── README.md
-├── VERSION.md
-├── index_old.html
-├── index_old_v2.html
+├── apps/
+│   └── exam/
+│       └── index.html
 ├── version/
 │   ├── README.md
 │   ├── v1.01/
 │   └── v2.01/
+├── docs/
+├── gas/
+└── references/
 ```
 
 ## 版本備註

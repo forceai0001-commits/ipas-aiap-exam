@@ -156,6 +156,54 @@
             font-size: 12px;
             line-height: 1.3;
         }
+        .set-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: flex-end;
+            margin: 0 0 10px;
+        }
+        .result-breakdown {
+            margin-top: 18px;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .result-breakdown-title {
+            padding: 12px 14px;
+            background: #f8f9fa;
+            color: var(--gray-800);
+            font-weight: 700;
+            border-bottom: 1px solid var(--gray-300);
+        }
+        .result-breakdown-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.7fr) repeat(4, minmax(52px, .55fr));
+            gap: 8px;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid #edf0f2;
+            font-size: 13px;
+        }
+        .result-breakdown-row:last-child {
+            border-bottom: 0;
+        }
+        .result-breakdown-row.header {
+            color: #5f6368;
+            font-weight: 700;
+            background: #fff;
+        }
+        .result-breakdown-row .num {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+        .result-breakdown-note {
+            margin: 10px 0 0;
+            color: #5f6368;
+            font-size: 12px;
+            line-height: 1.5;
+        }
         .author-link {
             color: var(--google-blue);
             text-decoration: none;
@@ -261,6 +309,13 @@
             .keyboard-hint { display: none; }
             .check-grid { grid-template-columns: 1fr; }
             .set-grid { grid-template-columns: 1fr; }
+            .set-actions { justify-content: stretch; }
+            .set-actions .btn { flex: 1; }
+            .result-breakdown-row {
+                grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(42px, .5fr));
+                padding: 10px;
+                font-size: 12px;
+            }
         }
 
         /* Result View */
@@ -423,6 +478,10 @@
         <div class="card">
             <div class="form-group">
                 <label>勾選科目與年份</label>
+                <div class="set-actions">
+                    <button class="btn btn-outline btn-sm" type="button" onclick="app.setAllExamSets('browse', true)">全部選擇</button>
+                    <button class="btn btn-outline btn-sm" type="button" onclick="app.setAllExamSets('browse', false)">全部取消</button>
+                </div>
                 <div class="set-grid" id="browse-exam-sets"></div>
             </div>
             <div class="stat-grid">
@@ -457,6 +516,10 @@
             <h3 style="text-align: center; margin-top: 0;">測驗設定</h3>
             <div class="form-group">
                 <label>測驗科目與年份</label>
+                <div class="set-actions">
+                    <button class="btn btn-outline btn-sm" type="button" onclick="app.setAllExamSets('exam', true)">全部選擇</button>
+                    <button class="btn btn-outline btn-sm" type="button" onclick="app.setAllExamSets('exam', false)">全部取消</button>
+                </div>
                 <div class="set-grid" id="exam-exam-sets"></div>
             </div>
             <div class="form-group">
@@ -528,6 +591,7 @@
                     <div class="stat-value" style="color: var(--google-red);" id="result-wrong">0</div>
                 </div>
             </div>
+            <div id="result-breakdown"></div>
 
             <div style="margin-top: 24px; gap: 10px; display: grid;">
                 <button class="btn btn-primary btn-block" onclick="app.switchMode('setup')">重新測驗</button>
@@ -791,13 +855,22 @@ const app = {
         const handler = scope === 'browse' ? 'app.filterBrowseData(true)' : 'app.updateExamLimitBounds()';
         container.innerHTML = sets.map(set => `
             <label class="check-item set-item">
-                <input type="checkbox" name="${scope}-set" value="${this.escapeAttr(set.key)}" checked onchange="${handler}">
+                <input type="checkbox" name="${scope}-set" value="${this.escapeAttr(set.key)}" onchange="${handler}">
                 <span class="set-text">
                     <span class="set-title">${this.escapeHtml(set.label)}</span>
                     <span class="set-meta">${this.escapeHtml(set.meta)}</span>
                 </span>
             </label>
         `).join('');
+    },
+
+    setAllExamSets: function(scope, checked) {
+        document.querySelectorAll(`input[name="${scope}-set"]`).forEach(input => {
+            input.checked = checked;
+        });
+
+        if (scope === 'browse') this.filterBrowseData(true);
+        if (scope === 'exam') this.updateExamLimitBounds();
     },
 
     filterBySetKeys: function(setKeys) {
@@ -819,6 +892,74 @@ const app = {
 
             return a.id.localeCompare(b.id);
         });
+    },
+
+    buildBalancedExamList: function(selectedSetKeys, order, limit) {
+        const selectedSet = new Set(selectedSetKeys);
+        const setOrder = this.getAvailableExamSets()
+            .filter(set => selectedSet.has(set.key))
+            .map(set => set.key);
+        const groups = setOrder
+            .map(key => {
+                const questionsInSet = questions.filter(q => q.setKey === key);
+                const list = order === 'rand'
+                    ? this.shuffle([...questionsInSet])
+                    : this.sortQuestions([...questionsInSet]);
+                return {
+                    key: key,
+                    label: questionsInSet[0]?.setLabel || key,
+                    available: questionsInSet.length,
+                    list: list,
+                    take: 0
+                };
+            })
+            .filter(group => group.available > 0);
+
+        const totalAvailable = groups.reduce((sum, group) => sum + group.available, 0);
+        const target = Math.min(limit, totalAvailable);
+        let allocated = 0;
+
+        while (allocated < target) {
+            let moved = false;
+            for (const group of groups) {
+                if (allocated >= target) break;
+                if (group.take >= group.available) continue;
+                group.take += 1;
+                allocated += 1;
+                moved = true;
+            }
+            if (!moved) break;
+        }
+
+        let list = [];
+        if (order === 'rand') {
+            const buckets = groups.map(group => group.list.slice(0, group.take));
+            let hasItem = true;
+            while (hasItem) {
+                hasItem = false;
+                for (const bucket of buckets) {
+                    const item = bucket.shift();
+                    if (item) {
+                        list.push(item);
+                        hasItem = true;
+                    }
+                }
+            }
+            list = this.shuffle(list);
+        } else {
+            list = groups.flatMap(group => group.list.slice(0, group.take));
+            list = this.sortQuestions(list);
+        }
+
+        return {
+            list: list,
+            distribution: groups.map(group => ({
+                key: group.key,
+                label: group.label,
+                available: group.available,
+                selected: group.take
+            }))
+        };
     },
 
     getSetModeName: function(setKeys) {
@@ -989,16 +1130,16 @@ const app = {
         const selectedSetKeys = this.getSelectedSetKeys('exam');
         const order = document.getElementById('exam-order').value;
         let limit = parseInt(document.getElementById('exam-limit').value);
-        let list = this.filterBySetKeys(selectedSetKeys);
+        const sourceList = this.filterBySetKeys(selectedSetKeys);
         const modeName = this.getSetModeName(selectedSetKeys);
         
         if (selectedSetKeys.length === 0) return alert("請至少勾選一組科目與年份");
-        if (list.length === 0) return alert("無題目可出");
-        if (limit > list.length) limit = list.length;
-        if (order === 'rand') list = this.shuffle([...list]);
-        else list = this.sortQuestions([...list]);
+        if (sourceList.length === 0) return alert("無題目可出");
+        if (!limit || limit < 1) limit = Math.min(50, sourceList.length);
+        if (limit > sourceList.length) limit = sourceList.length;
 
-        list = list.slice(0, limit);
+        const balancedExam = this.buildBalancedExamList(selectedSetKeys, order, limit);
+        const list = balancedExam.list;
 
         this.state.exam = {
             list: list,
@@ -1006,7 +1147,11 @@ const app = {
             answers: [],
             scorePerQ: 100 / list.length,
             userChoice: null,
-            isSubmitted: false
+            isSubmitted: false,
+            selectedSetKeys: selectedSetKeys,
+            modeName: modeName,
+            order: order,
+            distribution: balancedExam.distribution
         };
 
         document.getElementById('exam-header-info').innerText = `${modeName} / ${limit}題`;
@@ -1115,6 +1260,7 @@ const app = {
         document.getElementById('result-score').innerText = (correct * ex.scorePerQ).toFixed(0);
         document.getElementById('result-correct').innerText = correct;
         document.getElementById('result-wrong').innerText = wrong;
+        this.renderResultBreakdown(ex);
         
         // Render Review
         const reviewContainer = document.getElementById('review-list');
@@ -1157,6 +1303,55 @@ const app = {
         }
 
         this.switchMode('result');
+    },
+
+    renderResultBreakdown: function(ex) {
+        const container = document.getElementById('result-breakdown');
+        if (!container) return;
+
+        const rows = ex.distribution
+            .filter(item => item.selected > 0)
+            .map(item => {
+                const answers = ex.answers.filter(answer => answer.qData.setKey === item.key);
+                const correct = answers.filter(answer => answer.isCorrect).length;
+                const wrong = answers.length - correct;
+                const accuracy = answers.length ? Math.round((correct / answers.length) * 100) : 0;
+                return {
+                    label: item.label,
+                    selected: item.selected,
+                    correct: correct,
+                    wrong: wrong,
+                    accuracy: accuracy
+                };
+            });
+
+        const isMixed = rows.length > 1;
+        const note = isMixed
+            ? '混合題型已採平均配題：系統會輪流從每一組題型抽題，若某組題目不足，剩餘題數會自動分配給其他組。'
+            : '單一題型測驗：本表顯示該題型的答題表現。';
+
+        container.innerHTML = `
+            <div class="result-breakdown">
+                <div class="result-breakdown-title">題型分布與答題表</div>
+                <div class="result-breakdown-row header">
+                    <div>題型</div>
+                    <div class="num">出題</div>
+                    <div class="num">答對</div>
+                    <div class="num">答錯</div>
+                    <div class="num">正確率</div>
+                </div>
+                ${rows.map(row => `
+                    <div class="result-breakdown-row">
+                        <div>${this.escapeHtml(row.label)}</div>
+                        <div class="num">${row.selected}</div>
+                        <div class="num">${row.correct}</div>
+                        <div class="num">${row.wrong}</div>
+                        <div class="num">${row.accuracy}%</div>
+                    </div>
+                `).join('')}
+            </div>
+            <p class="result-breakdown-note">${note}</p>
+        `;
     },
 
     downloadMistakesCSV: function() {
