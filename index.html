@@ -137,6 +137,60 @@
         }
         .set-grid {
             display: grid;
+            gap: 12px;
+        }
+        .set-series {
+            border: 2px solid var(--gray-300);
+            border-radius: 10px;
+            padding: 12px;
+            background: #fff;
+        }
+        .set-series.series-a-114 {
+            border-color: #9ec1ff;
+            background: #f6f9ff;
+        }
+        .set-series.series-a-115 {
+            border-color: #a8dab5;
+            background: #f6fff8;
+        }
+        .set-series.series-b {
+            border-color: #f9d56e;
+            background: #fffaf0;
+        }
+        .set-series-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #3c4043;
+            font-weight: 900;
+        }
+        .set-series-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 48px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #fff;
+            font-size: 12px;
+            font-weight: 900;
+        }
+        .series-a-114 .set-series-pill {
+            color: #174ea6;
+            border: 1px solid #9ec1ff;
+        }
+        .series-a-115 .set-series-pill {
+            color: #137333;
+            border: 1px solid #a8dab5;
+        }
+        .series-b .set-series-pill {
+            color: #7a4d00;
+            border: 1px solid #f9d56e;
+        }
+        .set-series-items {
+            display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 8px;
         }
@@ -158,6 +212,11 @@
             color: #5f6368;
             font-size: 12px;
             line-height: 1.3;
+        }
+        .set-count {
+            color: #5f6368;
+            font-size: 12px;
+            font-weight: 800;
         }
         .set-actions {
             display: flex;
@@ -240,6 +299,54 @@
             color: #5f6368;
             font-size: 12px;
             line-height: 1.5;
+        }
+        .time-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) 70px minmax(80px, 1fr) 58px;
+            gap: 10px;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid #edf0f2;
+            font-size: 13px;
+        }
+        .time-row:last-child {
+            border-bottom: 0;
+        }
+        .time-row.header {
+            color: #5f6368;
+            font-weight: 800;
+            background: #f8f9fa;
+        }
+        .time-status {
+            display: inline-flex;
+            width: fit-content;
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 900;
+        }
+        .time-status.correct {
+            background: #e6f4ea;
+            color: #137333;
+        }
+        .time-status.wrong {
+            background: #fce8e6;
+            color: #c5221f;
+        }
+        .time-bar-track {
+            height: 10px;
+            border-radius: 999px;
+            background: #edf0f2;
+            overflow: hidden;
+        }
+        .time-bar {
+            height: 100%;
+            min-width: 3px;
+            border-radius: 999px;
+            background: var(--google-blue);
+        }
+        .time-bar.wrong {
+            background: var(--google-red);
         }
         .author-link {
             color: var(--google-blue);
@@ -847,6 +954,7 @@
             .keyboard-hint { display: none; }
             .check-grid { grid-template-columns: 1fr; }
             .set-grid { grid-template-columns: 1fr; }
+            .set-series-items { grid-template-columns: 1fr; }
             .choice-grid { grid-template-columns: 1fr; }
             .exam-topbar { grid-template-columns: 1fr; }
             .exam-timer { width: 100%; }
@@ -869,6 +977,11 @@
                 grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(42px, .5fr));
                 padding: 10px;
                 font-size: 12px;
+            }
+            .time-row {
+                grid-template-columns: 1fr;
+                gap: 6px;
+                padding: 10px;
             }
         }
 
@@ -1062,7 +1175,9 @@
                 📘 官方簡章2026/4/10版
             </a>
         </div>
-        <div class="update-note">update 2026/4/26｜免費版 v2.03｜新增初階考點分析：可比較兩次初階 A1 / A2 題型與官方考綱分類。中階分類分析將於 v2.04 補齊；AI威力版功能更齊全。</div>
+        <div class="update-note">
+            update 2026/4/26｜免費版 v2.03｜本版三大更新：1. 納入 2026 第 1 次初階官方考試題庫；2. 新增初階考點分析，可比較兩次初階 A1 / A2 題型與官方考綱分類；3. 強化人性化延伸互動設計，支援練習 / 模擬考模式、答題計時、考後檢討與 PDF 留存。中階分類分析將於 v2.04 補齊；AI威力版功能更齊全。
+        </div>
     </div>
     <div class="nav-bar">
         <div class="nav-item nav-analysis active" data-mode="analysis" onclick="app.switchMode('analysis')">初階考點分析</div>
@@ -1284,6 +1399,7 @@
                 <h3 style="color: #666; margin:0;" id="review-title">錯題回顧</h3>
                 <div style="display:flex; gap:10px;">
                     <button class="btn btn-sm btn-dark-outline" onclick="app.printResults()">列印 / 存為 PDF</button>
+                    <button class="btn btn-sm btn-danger-outline" onclick="app.downloadMistakesCSV()">下載錯題 CSV</button>
                 </div>
             </div>
             <div id="review-list"></div>
@@ -1519,6 +1635,9 @@ const app = {
                     setLabel: examSet.label,
                     setMeta: examSet.meta,
                     setOrder: examSet.order,
+                    setSeriesKey: examSet.seriesKey,
+                    setSeriesLabel: examSet.seriesLabel,
+                    setSeriesClass: examSet.seriesClass,
                     question: String(row['題目'] || row['question'] || "").trim(),
                     options: [
                         String(row['選項1'] || row['opt1'] || "").trim(),
@@ -1544,8 +1663,29 @@ const app = {
             key: `${subject}||${filename}`,
             label: `${subject}｜${parsed.yearLabel} ${parsed.sessionLabel}${parsed.levelLabel}`,
             meta: subjectName,
-            order: `${String(9999 - parsed.yearNumber).padStart(4, '0')}-${parsed.levelOrder}-${parsed.sessionOrder}-${this.getSubjectOrder(subject)}`
+            order: `${String(9999 - parsed.yearNumber).padStart(4, '0')}-${parsed.levelOrder}-${parsed.sessionOrder}-${this.getSubjectOrder(subject)}`,
+            seriesKey: this.getExamSeriesKey(subject, parsed),
+            seriesLabel: this.getExamSeriesLabel(subject, parsed),
+            seriesClass: this.getExamSeriesClass(subject, parsed)
         };
+    },
+
+    getExamSeriesKey: function(subject, parsed) {
+        if (subject.startsWith('B')) return 'b-middle';
+        if (parsed.yearLabel === '2026') return 'a-115';
+        return 'a-114';
+    },
+
+    getExamSeriesLabel: function(subject, parsed) {
+        if (subject.startsWith('B')) return '中階 B 系列｜114 第二梯次';
+        if (parsed.yearLabel === '2026') return '初階 A 系列｜115 第一次';
+        return '初階 A 系列｜114 第四梯次';
+    },
+
+    getExamSeriesClass: function(subject, parsed) {
+        if (subject.startsWith('B')) return 'series-b';
+        if (parsed.yearLabel === '2026') return 'series-a-115';
+        return 'series-a-114';
     },
 
     parseFilename: function(filename) {
@@ -1601,11 +1741,42 @@ const app = {
                     key: q.setKey,
                     label: q.setLabel,
                     meta: q.setMeta,
-                    order: q.setOrder
+                    order: q.setOrder,
+                    seriesKey: q.setSeriesKey,
+                    seriesLabel: q.setSeriesLabel,
+                    seriesClass: q.setSeriesClass,
+                    count: 0
                 });
             }
+            map.get(q.setKey).count += 1;
         });
         return Array.from(map.values()).sort((a, b) => a.order.localeCompare(b.order));
+    },
+
+    groupExamSetsBySeries: function(sets) {
+        const order = ['a-115', 'a-114', 'b-middle'];
+        const groups = new Map();
+        sets.forEach(set => {
+            const key = set.seriesKey || 'other';
+            if (!groups.has(key)) {
+                groups.set(key, {
+                    key: key,
+                    label: set.seriesLabel || '其他題型',
+                    className: set.seriesClass || '',
+                    sets: [],
+                    count: 0
+                });
+            }
+            const group = groups.get(key);
+            group.sets.push(set);
+            group.count += set.count || 0;
+        });
+        return Array.from(groups.values())
+            .sort((a, b) => {
+                const aIdx = order.includes(a.key) ? order.indexOf(a.key) : 99;
+                const bIdx = order.includes(b.key) ? order.indexOf(b.key) : 99;
+                return aIdx - bIdx || a.label.localeCompare(b.label);
+            });
     },
 
     getSelectedSetKeys: function(scope) {
@@ -1623,14 +1794,25 @@ const app = {
         const container = document.getElementById(`${scope}-exam-sets`);
         if (!container) return;
         const handler = scope === 'browse' ? 'app.filterBrowseData(true)' : 'app.updateExamLimitBounds()';
-        container.innerHTML = sets.map(set => `
-            <label class="check-item set-item">
-                <input type="checkbox" name="${scope}-set" value="${this.escapeAttr(set.key)}" onchange="${handler}">
-                <span class="set-text">
-                    <span class="set-title">${this.escapeHtml(set.label)}</span>
-                    <span class="set-meta">${this.escapeHtml(set.meta)}</span>
-                </span>
-            </label>
+        container.innerHTML = this.groupExamSetsBySeries(sets).map(group => `
+            <section class="set-series ${this.escapeAttr(group.className)}">
+                <div class="set-series-head">
+                    <span>${this.escapeHtml(group.label)}</span>
+                    <span class="set-series-pill">${group.count} 題</span>
+                </div>
+                <div class="set-series-items">
+                    ${group.sets.map(set => `
+                        <label class="check-item set-item">
+                            <input type="checkbox" name="${scope}-set" value="${this.escapeAttr(set.key)}" onchange="${handler}">
+                            <span class="set-text">
+                                <span class="set-title">${this.escapeHtml(set.label)}</span>
+                                <span class="set-meta">${this.escapeHtml(set.meta)}</span>
+                                <span class="set-count">${set.count || 0} 題</span>
+                            </span>
+                        </label>
+                    `).join('')}
+                </div>
+            </section>
         `).join('');
     },
 
@@ -2340,7 +2522,48 @@ const app = {
                 `).join('')}
             </div>
             <p class="result-breakdown-note">${note}</p>
+            ${this.renderQuestionTimeBreakdown(ex)}
             ${topicBreakdownHtml}
+        `;
+    },
+
+    renderQuestionTimeBreakdown: function(ex) {
+        const totalMs = ex.answers.reduce((sum, answer) => sum + (answer.timeSpentMs || 0), 0);
+        const maxMs = Math.max(1, ...ex.answers.map(answer => answer.timeSpentMs || 0));
+        const rows = ex.answers.map((answer, index) => {
+            const q = answer.qData;
+            const ms = answer.timeSpentMs || 0;
+            const percent = totalMs ? (ms / totalMs) * 100 : 0;
+            const width = Math.max(3, Math.round((ms / maxMs) * 100));
+            return `
+                <div class="time-row">
+                    <div>
+                        <strong>${index + 1}. ${this.escapeHtml(q.id)}</strong>
+                        <div class="source-text">${this.escapeHtml(q.subject)}｜Q${q.qno}｜${this.escapeHtml(this.getTopicLabel(q.topic) || q.setLabel || '')}</div>
+                    </div>
+                    <div><span class="time-status ${answer.isCorrect ? 'correct' : 'wrong'}">${answer.isCorrect ? '答對' : '答錯'}</span></div>
+                    <div>
+                        <div class="time-bar-track" aria-label="本題作答時間比例">
+                            <div class="time-bar ${answer.isCorrect ? '' : 'wrong'}" style="width:${width}%;"></div>
+                        </div>
+                    </div>
+                    <div class="num">${this.formatDuration(ms)}｜${percent.toFixed(1)}%</div>
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="result-breakdown">
+                <div class="result-breakdown-title">每題作答時間分析</div>
+                <div class="time-row header">
+                    <div>題目</div>
+                    <div>結果</div>
+                    <div>時間比例條</div>
+                    <div class="num">時間｜佔比</div>
+                </div>
+                ${rows}
+            </div>
+            <p class="result-breakdown-note">時間分析同時看「絕對時間」與「佔總答題時間百分比」：花很久才答對代表觀念可能不穩；快速答錯則可能是粗心或關鍵字誤判。</p>
         `;
     },
 
@@ -2778,6 +3001,76 @@ const app = {
     formatSigned: function(value) {
         if (value > 0) return `+${value}`;
         return String(value);
+    },
+
+    downloadMistakesCSV: function() {
+        const ex = this.state.exam;
+        const wrongAnswers = ex.answers.filter(answer => !answer.isCorrect);
+        if (!wrongAnswers.length) {
+            alert('本次沒有錯題，不需要輸出錯題檢討 CSV。');
+            return;
+        }
+
+        const safe = (value) => `"${String(value ?? '').replace(/"/g, '""')}"`;
+        const rows = [];
+        const now = new Date();
+        const siteUrl = 'https://forceai0001-commits.github.io/ipas-aiap-exam/';
+        rows.push(['區塊', '項目', '內容', '補充']);
+        rows.push(['版權宣告', '工具名稱', 'iPAS AI應用規劃師 輔助小天使免費版 v2.03', 'Falo x Force 原力狐老師']);
+        rows.push(['版權宣告', '網站網址', siteUrl, 'GitHub Pages 發布版']);
+        rows.push(['版權宣告', '版本更新日期', 'update 2026/4/26', '免費版 v2.03']);
+        rows.push(['版權宣告', '輸出時間', this.formatDateTime(now), '使用者自行產生的錯題檢討報告']);
+        rows.push(['版權宣告', '使用聲明', '本 CSV 僅供個人學習、教學檢討與錯題整理使用；題目內容著作權歸原權利人所有，不代表官方立場，不得作為題庫資料散布、轉售或大量重製。', '本檔採人可閱讀格式，不設計為題庫匯入格式']);
+        rows.push([]);
+        rows.push(['錯題摘要', '總題數', ex.list.length, '']);
+        rows.push(['錯題摘要', '錯題數', wrongAnswers.length, '']);
+        rows.push(['錯題摘要', '答題時間', this.formatDuration(ex.elapsedMs || 0), '']);
+        rows.push([]);
+        rows.push(['錯題檢討', '題目資訊', '內容', '學習提示']);
+
+        wrongAnswers.forEach((answer, index) => {
+            const q = answer.qData;
+            const optionsText = q.options
+                .map((option, optIdx) => `${optIdx + 1}. ${option}`)
+                .join('\n');
+            rows.push([
+                `錯題 ${index + 1}`,
+                `${q.id}｜${q.subject}｜Q${q.qno}`,
+                q.question,
+                `作答時間 ${this.formatDuration(answer.timeSpentMs || 0)}`
+            ]);
+            rows.push([
+                `錯題 ${index + 1}`,
+                '選項',
+                optionsText,
+                ''
+            ]);
+            rows.push([
+                `錯題 ${index + 1}`,
+                '你的答案 / 正確答案',
+                `你的答案：${answer.userChoice + 1}. ${q.options[answer.userChoice] || '未作答'}\n正確答案：${q.answerIndex + 1}. ${q.options[q.answerIndex] || ''}`,
+                '建議回到官方考綱分類與相近題型一起複習'
+            ]);
+            rows.push([
+                `錯題 ${index + 1}`,
+                '官方分類 / 來源',
+                `${this.getTopicLabel(q.topic) || '未對應'}\n來源：${q.filename || '未知'}`,
+                ''
+            ]);
+            rows.push([]);
+        });
+
+        const csvContent = `\uFEFF${rows.map(row => row.map(safe).join(',')).join('\n')}`;
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const stamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+        link.href = url;
+        link.download = `FaloXForce_iPAS_AIAP_wrong_review_${stamp}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     },
 
     formatDateTime: function(date) {
