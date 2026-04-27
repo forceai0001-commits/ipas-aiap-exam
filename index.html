@@ -259,6 +259,26 @@
             line-height: 1.45;
             margin-top: 3px;
         }
+        .limit-actions {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .limit-btn {
+            padding: 9px 10px;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--google-blue);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 900;
+        }
+        .limit-btn:hover {
+            border-color: var(--google-blue);
+            background: #f5f8ff;
+        }
         .result-breakdown {
             margin-top: 18px;
             border: 1px solid var(--gray-300);
@@ -370,6 +390,64 @@
         .custom-ai-link:hover {
             text-decoration: underline;
         }
+        .site-header-panel {
+            padding: 16px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        .site-title {
+            margin: 0;
+            color: var(--google-blue);
+            font-size: 28px;
+            line-height: 1.25;
+            font-weight: 900;
+            letter-spacing: 0;
+        }
+        .site-title-main,
+        .site-title-sub {
+            display: inline;
+        }
+        .site-meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 5px;
+            color: #666;
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1.45;
+        }
+        .site-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 8px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .site-links a {
+            color: var(--google-blue);
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .site-links a:hover {
+            text-decoration: underline;
+        }
+        .header-toggle {
+            display: none;
+            margin: 8px auto 0;
+            padding: 6px 10px;
+            border: 1px solid var(--gray-300);
+            border-radius: 999px;
+            background: #fff;
+            color: #5f6368;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
         .update-note {
             max-width: 800px;
             margin: 10px auto 0;
@@ -381,6 +459,26 @@
             font-size: 13px;
             line-height: 1.55;
             text-align: left;
+        }
+        .update-note-title {
+            font-weight: 900;
+            margin-bottom: 6px;
+        }
+        .update-points {
+            display: grid;
+            gap: 4px;
+        }
+        .update-point {
+            display: grid;
+            grid-template-columns: 22px minmax(0, 1fr);
+            gap: 6px;
+            align-items: start;
+        }
+        .update-point b {
+            color: #7a4d00;
+        }
+        .update-note-foot {
+            margin-top: 6px;
         }
         .analysis-tabs {
             display: flex;
@@ -951,6 +1049,73 @@
         }
         /* Mobile optimization: hide hints on small screens */
         @media (max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+            .site-header-panel {
+                padding: 10px 12px 8px;
+            }
+            .site-title {
+                font-size: 23px;
+                line-height: 1.18;
+            }
+            .site-title-main,
+            .site-title-sub {
+                display: block;
+            }
+            .site-meta {
+                gap: 5px 8px;
+                font-size: 12px;
+            }
+            .author-link,
+            .custom-ai-link {
+                margin-left: 0;
+            }
+            .site-links {
+                gap: 7px 12px;
+                font-size: 12px;
+            }
+            .update-note {
+                margin-top: 9px;
+                padding: 9px 10px;
+                font-size: 13px;
+                line-height: 1.4;
+            }
+            .update-note-title {
+                margin-bottom: 4px;
+            }
+            .update-points {
+                gap: 3px;
+            }
+            .update-note-foot {
+                margin-top: 4px;
+            }
+            .header-toggle {
+                display: inline-flex;
+            }
+            header.header-collapsed .site-header-panel {
+                padding: 8px 12px;
+            }
+            header.header-collapsed .site-title {
+                font-size: 16px;
+                line-height: 1.25;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            header.header-collapsed .site-title-main,
+            header.header-collapsed .site-title-sub {
+                display: inline;
+            }
+            header.header-collapsed .site-meta,
+            header.header-collapsed .site-links,
+            header.header-collapsed .update-note {
+                display: none;
+            }
+            header.header-collapsed .header-toggle {
+                margin-top: 5px;
+                padding: 4px 9px;
+            }
             .keyboard-hint { display: none; }
             .check-grid { grid-template-columns: 1fr; }
             .set-grid { grid-template-columns: 1fr; }
@@ -1157,27 +1322,32 @@
     <p style="font-size: 12px; color: #999;">(請保持網路連線)</p>
 </div>
 
-<header>
-    <div style="padding: 16px; text-align: center; border-bottom: 1px solid #eee;">
-        <h2 style="margin:0; color: var(--google-blue);">iPAS AI應用規劃師 輔助小天使 <span class="free-version">免費版</span> v2.03</h2>
-        <div style="margin-top: 4px;">
-            <small style="color: #666; font-weight: bold;">
-                update 2026/4/26｜Falo x Force 原力狐老師
-                <a class="author-link" href="https://www.linkedin.com/in/force-cheng-taiwan/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                <a class="custom-ai-link" href="https://www.google.com.tw" target="_blank" rel="noopener noreferrer">AI威力加強版</a>
-            </small>
+<header id="site-header">
+    <div class="site-header-panel">
+        <h2 class="site-title">
+            <span class="site-title-main">iPAS AI應用規劃師</span>
+            <span class="site-title-sub">輔助小天使 <span class="free-version">免費版</span> v2.03</span>
+        </h2>
+        <div class="site-meta">
+            <span>update 2026/4/26</span>
+            <span>Falo x Force 原力狐老師</span>
+            <a class="author-link" href="https://www.linkedin.com/in/force-cheng-taiwan/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a class="custom-ai-link" href="https://www.google.com.tw" target="_blank" rel="noopener noreferrer">AI威力加強版</a>
         </div>
-        <div style="margin-top: 8px; font-size: 12px;">
-            <a href="https://www.ipas.org.tw/certification/AIAP/learning-resources" target="_blank" style="color: var(--google-blue); text-decoration: none;">
-                🔗 官方歷史考題資料來源
-            </a>
-            <a href="https://drive.google.com/file/d/1-i9aP__adgwq66OdYKX0KZPxvXatQtAO/view?usp=sharing" target="_blank" rel="noopener noreferrer" style="color: var(--google-blue); text-decoration: none; margin-left: 12px;">
-                📘 官方簡章2026/4/10版
-            </a>
+        <div class="site-links">
+            <a href="https://www.ipas.org.tw/certification/AIAP/learning-resources" target="_blank">官方歷史考題資料來源</a>
+            <a href="https://drive.google.com/file/d/1-i9aP__adgwq66OdYKX0KZPxvXatQtAO/view?usp=sharing" target="_blank" rel="noopener noreferrer">官方簡章2026/4/10版</a>
         </div>
         <div class="update-note">
-            update 2026/4/26｜免費版 v2.03｜本版三大更新：1. 納入 2026 第 1 次初階官方考試題庫；2. 新增初階考點分析，可比較兩次初階 A1 / A2 題型與官方考綱分類；3. 強化人性化延伸互動設計，支援練習 / 模擬考模式、答題計時、考後檢討與 PDF 留存。中階分類分析將於 v2.04 補齊；AI威力版功能更齊全。
+            <div class="update-note-title">免費版 v2.03｜本版三大更新</div>
+            <div class="update-points">
+                <div class="update-point"><b>1.</b><span>2026 第 1 次初階官方題庫。</span></div>
+                <div class="update-point"><b>2.</b><span>初階考點分析：兩次 A1 / A2 + 官方考綱。</span></div>
+                <div class="update-point"><b>3.</b><span>互動升級：練習 / 模擬考、計時、PDF、錯題 CSV。</span></div>
+            </div>
+            <div class="update-note-foot">中階分類分析將於 v2.04 補齊；AI威力版功能更齊全。</div>
         </div>
+        <button class="header-toggle" type="button" onclick="app.toggleHeaderInfo()">收合上方說明</button>
     </div>
     <div class="nav-bar">
         <div class="nav-item nav-analysis active" data-mode="analysis" onclick="app.switchMode('analysis')">初階考點分析</div>
@@ -1246,6 +1416,11 @@
             <div class="form-group">
                 <label>測驗題數</label>
                 <input type="number" id="exam-limit" value="50" min="5" max="350">
+                <div class="limit-actions" aria-label="常用測驗題數">
+                    <button class="limit-btn" type="button" onclick="app.setExamLimitPreset(50)">50 題</button>
+                    <button class="limit-btn" type="button" onclick="app.setExamLimitPreset(10)">10 題</button>
+                    <button class="limit-btn" type="button" onclick="app.setExamLimitPreset(5)">5 題</button>
+                </div>
             </div>
             <div class="form-group">
                 <label>答案顯示方式</label>
@@ -1936,6 +2111,18 @@ const app = {
         if (current < 5) input.value = Math.min(50, total);
     },
 
+    setExamLimitPreset: function(value) {
+        const input = document.getElementById('exam-limit');
+        if (!input) return;
+        const total = this.filterBySetKeys(this.getSelectedSetKeys('exam')).length;
+        if (total === 0) {
+            alert('請先勾選測驗科目與年份');
+            return;
+        }
+        input.value = Math.min(value, total);
+        this.updateExamLimitBounds();
+    },
+
     escapeHtml: function(value) {
         return String(value)
             .replace(/&/g, '&amp;')
@@ -2020,7 +2207,29 @@ const app = {
             document.getElementById(mode === 'result' ? 'view-result' : 'view-exam').classList.remove('hidden');
         }
         this.state.mode = mode;
+        this.collapseHeaderForMobile();
         window.scrollTo(0, 0);
+    },
+
+    collapseHeaderForMobile: function() {
+        const header = document.getElementById('site-header');
+        if (!header || !window.matchMedia('(max-width: 600px)').matches) return;
+        header.classList.add('header-collapsed');
+        this.updateHeaderToggleText();
+    },
+
+    toggleHeaderInfo: function() {
+        const header = document.getElementById('site-header');
+        if (!header) return;
+        header.classList.toggle('header-collapsed');
+        this.updateHeaderToggleText();
+    },
+
+    updateHeaderToggleText: function() {
+        const header = document.getElementById('site-header');
+        const button = document.querySelector('.header-toggle');
+        if (!header || !button) return;
+        button.innerText = header.classList.contains('header-collapsed') ? '展開說明' : '收合上方說明';
     },
 
     // --- KEYBOARD SUPPORT ---
