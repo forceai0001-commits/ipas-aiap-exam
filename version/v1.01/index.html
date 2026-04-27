@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>iPAS AIAP Learning OS</title>
+  <style>
+    :root {
+      --bg: #f6f7f4;
+      --surface: #ffffff;
+      --surface-2: #eef4f0;
+      --ink: #1d2521;
+      --muted: #65716b;
+      --line: #d8ded9;
+      --green: #246d57;
+      --blue: #315f9c;
+      --amber: #9a6817;
+      --red: #a23f3f;
+      --shadow: 0 16px 36px rgba(30, 36, 32, 0.09);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      border-right: 1px solid var(--line);
+      background: var(--surface);
+      padding: 24px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    main {
+      padding: 28px;
+    }
+
+    .brand {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: 1.3rem;
+      line-height: 1.35;
+      margin-bottom: 0;
+    }
+
+    h2 {
+      font-size: 1.45rem;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav a,
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      text-decoration: none;
+      font-weight: 700;
+      padding: 0 14px;
+    }
+
+    .nav a {
+      justify-content: flex-start;
+    }
+
+    .button.primary {
+      color: #fff;
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .button.blue {
+      color: #fff;
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.8fr);
+      gap: 20px;
+      align-items: stretch;
+      margin-bottom: 20px;
+    }
+
+    .panel,
+    .module,
+    .metric {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 24px;
+    }
+
+    .module {
+      display: grid;
+      gap: 16px;
+      padding: 20px;
+      min-height: 240px;
+    }
+
+    .module header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      padding: 0 10px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge.green {
+      color: var(--green);
+      background: #e8f3ee;
+      border-color: #b9d8ca;
+    }
+
+    .badge.blue {
+      color: var(--blue);
+      background: #e9eef8;
+      border-color: #c2d1ec;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .metric {
+      padding: 18px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 1.7rem;
+      margin-bottom: 6px;
+    }
+
+    .metric span {
+      color: var(--muted);
+    }
+
+    .flow {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .flow div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: var(--surface-2);
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--green);
+      flex: 0 0 auto;
+    }
+
+    .dot.blue {
+      background: var(--blue);
+    }
+
+    .dot.amber {
+      background: var(--amber);
+    }
+
+    .dot.red {
+      background: var(--red);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .small {
+      font-size: 0.9rem;
+    }
+
+    footer {
+      color: var(--muted);
+      padding: 22px 0 0;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .hero,
+      .cols-2,
+      .cols-3 {
+        grid-template-columns: 1fr;
+      }
+
+      main {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand">
+        <div class="mark">AI</div>
+        <h1>iPAS AIAP<br>Learning OS</h1>
+        <p>整併改版工作版，準備發布到新的 GitHub Pages。</p>
+      </div>
+
+      <nav class="nav" aria-label="主要入口">
+        <a href="apps/exam/index.html">題庫小天使</a>
+        <a href="apps/learning-os/index.html">Learning OS x CM</a>
+        <a href="docs/integration-map.md">整併地圖</a>
+        <a href="docs/architecture.md">架構文件</a>
+      </nav>
+    </aside>
+
+    <main>
+      <section class="hero">
+        <div class="panel">
+          <span class="badge green">Merged Workspace</span>
+          <h2 style="margin-top:14px">iPAS AI 應用規劃師教學系統</h2>
+          <p>
+            這個版本把「學生練題」與「老師內容管理」放在同一個發布入口。
+            現階段先保留兩個可運作模組，下一階段再統一題庫資料格式與審題流程。
+          </p>
+          <div class="actions">
+            <a class="button primary" href="apps/exam/index.html">進入題庫練習</a>
+            <a class="button blue" href="apps/learning-os/index.html">進入 Learning OS</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>目前整併狀態</h3>
+          <div class="flow">
+            <div><span class="dot"></span><span>GitHub Pages 題庫小天使已納入</span></div>
+            <div><span class="dot blue"></span><span>Learning OS x CM 已納入</span></div>
+            <div><span class="dot amber"></span><span>GAS CM 範例已保留</span></div>
+            <div><span class="dot red"></span><span>待做：CSV 與 JSON 題庫格式統一</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid cols-3" aria-label="系統摘要">
+        <div class="metric">
+          <strong>2</strong>
+          <span>可操作學習模組</span>
+        </div>
+        <div class="metric">
+          <strong>1</strong>
+          <span>GAS 內容母體範例</span>
+        </div>
+        <div class="metric">
+          <strong>MVP</strong>
+          <span>可發布到新 GitHub</span>
+        </div>
+      </section>
+
+      <section class="grid cols-2" style="margin-top:16px">
+        <article class="module">
+          <header>
+            <h3>題庫小天使</h3>
+            <span class="badge green">學生端</span>
+          </header>
+          <p>
+            保留原本 GitHub Pages 測試平台的題庫閱覽、模擬測驗、錯題 CSV 匯出。
+            這是學生最直接使用的練習介面。
+          </p>
+          <div class="actions">
+            <a class="button primary" href="apps/exam/index.html">開啟模組</a>
+            <a class="button" href="apps/exam/archive/">查看舊版</a>
+          </div>
+        </article>
+
+        <article class="module">
+          <header>
+            <h3>Learning OS x CM</h3>
+            <span class="badge blue">教學端</span>
+          </header>
+          <p>
+            保留本機原型的學習模組、新聞轉題、老師審核與內容母體概念。
+            這是後續改成正式教學系統的核心。
+          </p>
+          <div class="actions">
+            <a class="button blue" href="apps/learning-os/index.html">開啟模組</a>
+            <a class="button" href="docs/data-contracts.md">資料格式</a>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel" style="margin-top:16px">
+        <h3>下一步改版方向</h3>
+        <p class="small">
+          優先把 Google Sheet CSV 題庫轉成 Learning OS JSON 題庫格式。
+          這樣學生端、助教端、老師審核端會共用同一份資料模型，後續才容易接 GAS、版本控管與題庫發布流程。
+        </p>
+        <div class="actions">
+          <a class="button" href="docs/integration-map.md">閱讀整併地圖</a>
+          <a class="button" href="gas/Code.gs">查看 GAS 範例</a>
+        </div>
+      </section>
+
+      <footer>
+        iPAS AIAP Learning OS merged workspace. Source modules are preserved for teaching, comparison, and staged refactoring.
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

@@ -3,48 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPAS AI應用規劃師 輔助小天使免費版 v2.01｜Falo x Force 原力狐老師</title>
-    <meta name="description" content="iPAS AI應用規劃師輔助小天使免費版 v2.01，提供 AI 應用規劃師題庫閱覽、科目年份組合練習、模擬測驗與錯題回顧。已納入 2026 第 1 次初階考試題型。">
-    <meta name="keywords" content="iPAS, AI應用規劃師, AIAP, Falo, Falo AI, Falo x Force, 人工智慧基礎概論, 生成式AI應用與規劃, 題庫, 模擬測驗, 原力狐, Force Cheng, AI教學">
-    <meta name="author" content="Falo x Force 原力狐老師">
-    <meta name="robots" content="index, follow">
-    <meta name="language" content="zh-TW">
-    <meta name="geo.region" content="TW">
-    <meta name="geo.placename" content="Taiwan">
-    <meta name="geo.position" content="23.6978;120.9605">
-    <meta name="ICBM" content="23.6978, 120.9605">
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="zh_TW">
-    <meta property="og:title" content="iPAS AI應用規劃師 輔助小天使免費版 v2.01">
-    <meta property="og:description" content="免費題庫閱覽與模擬測驗工具，支援 2025 / 2026 不同科目年份組合出題。AI威力加強版請聯繫 Falo x Force。">
-    <meta property="og:site_name" content="iPAS AI應用規劃師 輔助小天使">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="iPAS AI應用規劃師 輔助小天使免費版 v2.01">
-    <meta name="twitter:description" content="iPAS AI應用規劃師題庫閱覽、模擬測驗與錯題回顧。已納入 2026 第 1 次初階考試題型。">
-    <link rel="canonical" href="./">
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "EducationalApplication",
-        "name": "iPAS AI應用規劃師 輔助小天使免費版",
-        "applicationCategory": "EducationalApplication",
-        "operatingSystem": "Web",
-        "inLanguage": "zh-TW",
-        "version": "2.01",
-        "description": "iPAS AI應用規劃師題庫閱覽、科目年份組合練習、模擬測驗與錯題回顧工具。",
-        "creator": {
-            "@type": "Person",
-            "name": "Falo x Force",
-            "alternateName": "原力狐老師",
-            "sameAs": "https://www.linkedin.com/in/force-cheng-taiwan/"
-        },
-        "areaServed": {
-            "@type": "Country",
-            "name": "Taiwan"
-        },
-        "isAccessibleForFree": true
-    }
-    </script>
+    <title>iPAS AI應用規劃師 輔助小天使 v1.01 By Force Cheng 原力狐 老師</title>
     <!-- 引入 PapaParse 用於解析 CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
@@ -104,91 +63,6 @@
         select, input[type="number"] {
             width: 100%; padding: 12px; border: 1px solid var(--gray-300);
             border-radius: 4px; font-size: 16px; background: white;
-        }
-        .check-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 8px;
-        }
-        .check-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-height: 44px;
-            margin: 0;
-            padding: 10px 12px;
-            border: 1px solid var(--gray-300);
-            border-radius: 8px;
-            background: #fff;
-            color: var(--gray-800);
-            cursor: pointer;
-        }
-        .check-item input {
-            width: 18px;
-            height: 18px;
-            flex: 0 0 auto;
-        }
-        .check-item span {
-            min-width: 0;
-            line-height: 1.35;
-        }
-        .set-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 8px;
-        }
-        .set-item {
-            min-height: 58px;
-            align-items: flex-start;
-        }
-        .set-text {
-            display: grid;
-            gap: 2px;
-            min-width: 0;
-        }
-        .set-title {
-            color: var(--gray-800);
-            font-weight: 700;
-            line-height: 1.3;
-        }
-        .set-meta {
-            color: #5f6368;
-            font-size: 12px;
-            line-height: 1.3;
-        }
-        .author-link {
-            color: var(--google-blue);
-            text-decoration: none;
-            font-weight: 700;
-            margin-left: 8px;
-        }
-        .author-link:hover {
-            text-decoration: underline;
-        }
-        .free-version {
-            color: var(--google-green);
-            font-weight: 800;
-        }
-        .custom-ai-link {
-            color: var(--google-red);
-            text-decoration: none;
-            font-weight: 800;
-            margin-left: 8px;
-        }
-        .custom-ai-link:hover {
-            text-decoration: underline;
-        }
-        .update-note {
-            max-width: 800px;
-            margin: 10px auto 0;
-            padding: 10px 12px;
-            border: 1px solid #f1d083;
-            border-radius: 8px;
-            background: #fff8e1;
-            color: #5f4300;
-            font-size: 13px;
-            line-height: 1.55;
-            text-align: left;
         }
 
         /* Cards */
@@ -259,8 +133,6 @@
         /* Mobile optimization: hide hints on small screens */
         @media (max-width: 600px) {
             .keyboard-hint { display: none; }
-            .check-grid { grid-template-columns: 1fr; }
-            .set-grid { grid-template-columns: 1fr; }
         }
 
         /* Result View */
@@ -381,7 +253,7 @@
 
 <!-- Print Footer (Visible only in Print Mode) -->
 <div class="print-only-footer">
-    iPAS AI應用規劃師 模擬測試結果｜介面與系統示範：Falo x Force 原力狐老師
+    iPAS AI應用規劃師 模擬測試結果｜介面與系統示範：Force Cheng 原力狐 老師
 </div>
 
 <!-- Loading Overlay -->
@@ -393,23 +265,15 @@
 
 <header>
     <div style="padding: 16px; text-align: center; border-bottom: 1px solid #eee;">
-        <h2 style="margin:0; color: var(--google-blue);">iPAS AI應用規劃師 輔助小天使 <span class="free-version">免費版</span> v2.01</h2>
+        <h2 style="margin:0; color: var(--google-blue);">iPAS AI應用規劃師 輔助小天使 v1.01</h2>
         <div style="margin-top: 4px;">
-            <small style="color: #666; font-weight: bold;">
-                By Falo x Force 原力狐老師 (2026/04/27)
-                <a class="author-link" href="https://www.linkedin.com/in/force-cheng-taiwan/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                <a class="custom-ai-link" href="https://www.google.com.tw" target="_blank" rel="noopener noreferrer">AI威力加強版</a>
-            </small>
+            <small style="color: #666; font-weight: bold;">By Force Cheng 原力狐 老師 (2025/12/29)</small>
         </div>
         <div style="margin-top: 8px; font-size: 12px;">
             <a href="https://www.ipas.org.tw/certification/AIAP/learning-resources" target="_blank" style="color: var(--google-blue); text-decoration: none;">
                 🔗 官方歷史考題資料來源
             </a>
-            <a href="https://drive.google.com/file/d/1-i9aP__adgwq66OdYKX0KZPxvXatQtAO/view?usp=sharing" target="_blank" rel="noopener noreferrer" style="color: var(--google-blue); text-decoration: none; margin-left: 12px;">
-                📘 官方簡章2026/4/10版
-            </a>
         </div>
-        <div class="update-note">免費版 v2.01｜2026 第 1 次初階題型已納入｜AI威力加強版請聯繫 Falo x Force。</div>
     </div>
     <div class="nav-bar">
         <div class="nav-item active" onclick="app.switchMode('browse')">題庫閱覽</div>
@@ -422,8 +286,15 @@
     <div id="view-browse">
         <div class="card">
             <div class="form-group">
-                <label>勾選科目與年份</label>
-                <div class="set-grid" id="browse-exam-sets"></div>
+                <label>選擇科目</label>
+                <select id="browse-subject" onchange="app.filterBrowseData(true)">
+                    <option value="ALL">全部科目</option>
+                    <option value="A1">A1 - 初階科目一</option>
+                    <option value="A2">A2 - 初階科目二</option>
+                    <option value="B1">B1 - 中階科目一</option>
+                    <option value="B2">B2 - 中階科目二</option>
+                    <option value="B3">B3 - 中階科目三</option>
+                </select>
             </div>
             <div class="stat-grid">
                 <div class="form-group" style="margin:0;">
@@ -456,8 +327,15 @@
         <div class="card">
             <h3 style="text-align: center; margin-top: 0;">測驗設定</h3>
             <div class="form-group">
-                <label>測驗科目與年份</label>
-                <div class="set-grid" id="exam-exam-sets"></div>
+                <label>測驗科目</label>
+                <select id="exam-subject">
+                    <option value="ALL">全部科目 (綜合測驗)</option>
+                    <option value="A1">A1 - 初階科目一</option>
+                    <option value="A2">A2 - 初階科目二</option>
+                    <option value="B1">B1 - 中階科目一</option>
+                    <option value="B2">B2 - 中階科目二</option>
+                    <option value="B3">B3 - 中階科目三</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>出題順序</label>
@@ -468,7 +346,7 @@
             </div>
             <div class="form-group">
                 <label>測驗題數</label>
-                <input type="number" id="exam-limit" value="50" min="5" max="350">
+                <input type="number" id="exam-limit" value="50" min="5" max="250">
             </div>
             <button class="btn btn-primary btn-block btn-lg" onclick="app.startExam()">開始測驗</button>
         </div>
@@ -574,7 +452,7 @@
 請聯繫告知，本站將即時配合調整或下架相關內容。
 
 介面與系統示範：
-Falo x Force｜原力狐老師
+Force Cheng｜原力狐 老師
 年份：2025 / 2026
 
 --------------------------------------------------
@@ -607,7 +485,7 @@ of the content on this site, please contact us,
 and we will promptly make adjustments or remove the content as requested.
 
 Interface & System Demonstration:
-Falo x Force | Instructor "Force Fox"
+Force Cheng | Instructor “Force Fox”
 Year: 2025 / 2026
             </div>
         </details>
@@ -616,7 +494,7 @@ Year: 2025 / 2026
 
 <script>
 // --- CONFIGURATION ---
-const GOOGLE_SHEET_ID = "1Gc3tRwERo0kMgUYQqfP747-3IoaN8yiTXPlsSIhComo";
+const GOOGLE_SHEET_ID = "1yd94GHcO5WTGkShyKhud_yCYBzjoaOZtGlk3hWsvci8";
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv`;
 
 // Global Data Container
@@ -646,8 +524,6 @@ const app = {
             download: true, header: true, skipEmptyLines: true,
             complete: (results) => {
                 this.processData(results.data);
-                this.renderExamSetFilters();
-                this.syncExamLimitBounds();
                 document.getElementById('loading-overlay').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
                 this.filterBrowseData(true);
@@ -674,18 +550,11 @@ const app = {
                     ansRaw = String(ansRaw).trim();
                     ansIdx = parseInt(ansRaw) - 1;
                 }
-                const subject = String(row['分類'] || row['subject'] || "").trim();
-                const filename = String(row['文件名稱'] || row['filename'] || "").trim();
-                const examSet = this.buildExamSet(subject, filename);
                 questions.push({
                     id: String(id).trim(),
-                    subject: subject,
+                    subject: String(row['分類'] || row['subject'] || "").trim(),
                     qno: parseInt(row['題號'] || row['qno']) || 0,
-                    filename: filename,
-                    setKey: examSet.key,
-                    setLabel: examSet.label,
-                    setMeta: examSet.meta,
-                    setOrder: examSet.order,
+                    filename: String(row['文件名稱'] || row['filename'] || "").trim(),
                     question: String(row['題目'] || row['question'] || "").trim(),
                     options: [
                         String(row['選項1'] || row['opt1'] || "").trim(),
@@ -697,163 +566,6 @@ const app = {
                 });
             } catch (err) { console.warn(`Row ${index} format error`, err); }
         });
-    },
-
-    syncExamLimitBounds: function() {
-        this.updateExamLimitBounds();
-    },
-
-    buildExamSet: function(subject, filename) {
-        const parsed = this.parseFilename(filename);
-        const subjectName = this.getSubjectName(subject);
-        return {
-            key: `${subject}||${filename}`,
-            label: `${subject}｜${parsed.yearLabel} ${parsed.sessionLabel}${parsed.levelLabel}`,
-            meta: subjectName,
-            order: `${String(9999 - parsed.yearNumber).padStart(4, '0')}-${parsed.levelOrder}-${parsed.sessionOrder}-${this.getSubjectOrder(subject)}`
-        };
-    },
-
-    parseFilename: function(filename) {
-        const yearMatch = String(filename).match(/(\d{3})年/);
-        const rocYear = yearMatch ? parseInt(yearMatch[1], 10) : 0;
-        const westernYear = rocYear ? rocYear + 1911 : 0;
-        const sessionMatch = String(filename).match(/第([一二三四五六七八九十]+)(梯次|次)/);
-        const sessionNumber = sessionMatch ? this.chineseNumberToInt(sessionMatch[1]) : 0;
-        const sessionType = sessionMatch ? sessionMatch[2] : '次';
-        const levelLabel = filename.includes('中級') ? '中階' : '初階';
-
-        return {
-            yearNumber: westernYear || 0,
-            yearLabel: westernYear ? `${westernYear}` : '未標年份',
-            sessionLabel: sessionNumber ? `第${sessionNumber}${sessionType}` : '未標梯次',
-            sessionOrder: String(99 - sessionNumber).padStart(2, '0'),
-            levelLabel: levelLabel,
-            levelOrder: levelLabel === '初階' ? '1' : '2'
-        };
-    },
-
-    chineseNumberToInt: function(value) {
-        const map = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10 };
-        if (value === '十') return 10;
-        if (value.includes('十')) {
-            const [tens, ones] = value.split('十');
-            return (tens ? map[tens] : 1) * 10 + (ones ? map[ones] : 0);
-        }
-        return map[value] || 0;
-    },
-
-    getSubjectName: function(subject) {
-        const names = {
-            A1: '第一科 人工智慧基礎概論',
-            A2: '第二科 生成式 AI 應用與規劃',
-            B1: '第一科 人工智慧技術應用與規劃',
-            B2: '第二科 大數據處理分析與應用',
-            B3: '第三科 機器學習技術與應用'
-        };
-        return names[subject] || '未標科目';
-    },
-
-    getSubjectOrder: function(subject) {
-        const order = { A1: '1', A2: '2', B1: '3', B2: '4', B3: '5' };
-        return order[subject] || '9';
-    },
-
-    getAvailableExamSets: function() {
-        const map = new Map();
-        questions.forEach(q => {
-            if (!map.has(q.setKey)) {
-                map.set(q.setKey, {
-                    key: q.setKey,
-                    label: q.setLabel,
-                    meta: q.setMeta,
-                    order: q.setOrder
-                });
-            }
-        });
-        return Array.from(map.values()).sort((a, b) => a.order.localeCompare(b.order));
-    },
-
-    getSelectedSetKeys: function(scope) {
-        return Array.from(document.querySelectorAll(`input[name="${scope}-set"]:checked`))
-            .map(input => input.value);
-    },
-
-    renderExamSetFilters: function() {
-        const sets = this.getAvailableExamSets();
-        this.renderExamSetFilterGroup('browse', sets);
-        this.renderExamSetFilterGroup('exam', sets);
-    },
-
-    renderExamSetFilterGroup: function(scope, sets) {
-        const container = document.getElementById(`${scope}-exam-sets`);
-        if (!container) return;
-        const handler = scope === 'browse' ? 'app.filterBrowseData(true)' : 'app.updateExamLimitBounds()';
-        container.innerHTML = sets.map(set => `
-            <label class="check-item set-item">
-                <input type="checkbox" name="${scope}-set" value="${this.escapeAttr(set.key)}" checked onchange="${handler}">
-                <span class="set-text">
-                    <span class="set-title">${this.escapeHtml(set.label)}</span>
-                    <span class="set-meta">${this.escapeHtml(set.meta)}</span>
-                </span>
-            </label>
-        `).join('');
-    },
-
-    filterBySetKeys: function(setKeys) {
-        if (!setKeys.length) return [];
-        const keySet = new Set(setKeys);
-        return questions.filter(q => keySet.has(q.setKey));
-    },
-
-    sortQuestions: function(list) {
-        return list.sort((a, b) => {
-            const subjectCompare = a.subject.localeCompare(b.subject);
-            if (subjectCompare !== 0) return subjectCompare;
-
-            const fileCompare = a.filename.localeCompare(b.filename);
-            if (fileCompare !== 0) return fileCompare;
-
-            const qnoCompare = a.qno - b.qno;
-            if (qnoCompare !== 0) return qnoCompare;
-
-            return a.id.localeCompare(b.id);
-        });
-    },
-
-    getSetModeName: function(setKeys) {
-        const sets = this.getAvailableExamSets();
-        if (!setKeys.length) return '未選題型';
-        if (setKeys.length === sets.length) return '全部題型';
-
-        const selectedSets = sets.filter(set => setKeys.includes(set.key));
-        if (selectedSets.length === 1) return selectedSets[0].label;
-        return `${selectedSets.length}組題型`;
-    },
-
-    updateExamLimitBounds: function() {
-        const input = document.getElementById('exam-limit');
-        if (!input) return;
-        const total = this.filterBySetKeys(this.getSelectedSetKeys('exam')).length;
-        input.max = String(Math.max(total, 5));
-        if (total === 0) return;
-
-        const current = parseInt(input.value) || 50;
-        if (current > total) input.value = total;
-        if (current < 5) input.value = Math.min(50, total);
-    },
-
-    escapeHtml: function(value) {
-        return String(value)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-    },
-
-    escapeAttr: function(value) {
-        return this.escapeHtml(value);
     },
 
     switchMode: function(mode) {
@@ -902,15 +614,15 @@ const app = {
 
     // --- BROWSE LOGIC ---
     filterBrowseData: function(reset = false) {
-        const selectedSetKeys = this.getSelectedSetKeys('browse');
+        const subject = document.getElementById('browse-subject').value;
         const order = document.getElementById('browse-order').value;
-        let list = this.filterBySetKeys(selectedSetKeys);
+        let list = questions.filter(q => subject === 'ALL' || q.subject === subject);
         
         if (order === 'rand') list = this.shuffle([...list]); 
-        else list = this.sortQuestions([...list]);
+        else list.sort((a, b) => a.qno - b.qno);
 
         this.state.browse.currentList = list;
-        document.getElementById('browse-count').innerText = `${this.getSetModeName(selectedSetKeys)}｜共 ${list.length} 題`;
+        document.getElementById('browse-count').innerText = `共 ${list.length} 題`;
 
         if (reset) {
             this.state.browse.renderedCount = 0;
@@ -924,10 +636,9 @@ const app = {
         const container = document.getElementById('browse-list');
         const showAllAns = document.getElementById('browse-show-ans').checked;
         const btnLoadMore = document.getElementById('btn-load-more');
-        const triggerEvent = window.event;
 
         // Toggle handling
-        if (triggerEvent && triggerEvent.target && triggerEvent.target.id === 'browse-show-ans') {
+        if (event && event.target && event.target.id === 'browse-show-ans') {
             container.innerHTML = '';
             this.appendItemsToBrowse(currentList.slice(0, Math.max(chunkSize, renderedCount)), showAllAns);
             return; 
@@ -971,7 +682,6 @@ const app = {
                 </div>
                 <div class="question-text"><span style="color:var(--google-blue);">Q${q.qno}.</span> ${q.question}</div>
                 <div class="browse-opts-container">${optionsHtml}</div>
-                <div class="source-text">來源：${q.filename || '未知'}</div>
             `;
             container.appendChild(card);
         });
@@ -986,17 +696,15 @@ const app = {
 
     // --- EXAM LOGIC ---
     startExam: function() {
-        const selectedSetKeys = this.getSelectedSetKeys('exam');
+        const subject = document.getElementById('exam-subject').value;
         const order = document.getElementById('exam-order').value;
         let limit = parseInt(document.getElementById('exam-limit').value);
-        let list = this.filterBySetKeys(selectedSetKeys);
-        const modeName = this.getSetModeName(selectedSetKeys);
+        let list = questions.filter(q => subject === 'ALL' || q.subject === subject);
         
-        if (selectedSetKeys.length === 0) return alert("請至少勾選一組科目與年份");
         if (list.length === 0) return alert("無題目可出");
         if (limit > list.length) limit = list.length;
         if (order === 'rand') list = this.shuffle([...list]);
-        else list = this.sortQuestions([...list]);
+        else list.sort((a, b) => a.qno - b.qno);
 
         list = list.slice(0, limit);
 
@@ -1009,6 +717,7 @@ const app = {
             isSubmitted: false
         };
 
+        const modeName = (subject === 'ALL' ? '綜合' : subject);
         document.getElementById('exam-header-info').innerText = `${modeName} / ${limit}題`;
         this.switchMode('exam_running');
         this.renderExamQuestion();
