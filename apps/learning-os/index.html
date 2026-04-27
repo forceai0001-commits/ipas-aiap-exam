@@ -1,0 +1,1331 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>iPAS AIAP Learning OS x CM</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f7f4;
+      --surface: #ffffff;
+      --surface-2: #f1f4f1;
+      --ink: #1e2420;
+      --muted: #64706a;
+      --line: #d9ded8;
+      --green: #28745c;
+      --green-2: #e4f2eb;
+      --blue: #2f65a7;
+      --blue-2: #e7eef8;
+      --amber: #9b6b16;
+      --amber-2: #f8edd7;
+      --red: #a33d3d;
+      --red-2: #f8e3e3;
+      --violet: #684c9d;
+      --violet-2: #eee8f8;
+      --shadow: 0 18px 45px rgba(32, 38, 35, 0.08);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(247, 247, 244, 0.92)),
+        radial-gradient(circle at 8% 0%, rgba(40, 116, 92, 0.12), transparent 24%),
+        radial-gradient(circle at 92% 6%, rgba(47, 101, 167, 0.12), transparent 20%),
+        var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      min-height: 40px;
+      border-radius: 8px;
+      padding: 0 14px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: #aeb9b2;
+    }
+
+    button.primary {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    button.warning {
+      background: var(--amber-2);
+      color: #553700;
+      border-color: #e8c983;
+    }
+
+    button.ghost {
+      background: transparent;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      border-right: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.74);
+      backdrop-filter: blur(14px);
+      padding: 22px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+    }
+
+    main {
+      padding: 28px;
+    }
+
+    .brand {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .brand h1 {
+      font-size: 1.18rem;
+      line-height: 1.35;
+      margin: 0;
+    }
+
+    .brand p,
+    .muted {
+      color: var(--muted);
+    }
+
+    .brand p {
+      margin: 0;
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: flex-start;
+      width: 100%;
+      border-color: transparent;
+      background: transparent;
+      min-height: 44px;
+    }
+
+    .nav button.active {
+      background: var(--green-2);
+      border-color: #b8d7c9;
+      color: #153f31;
+      font-weight: 700;
+    }
+
+    .icon {
+      width: 22px;
+      height: 22px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 22px;
+    }
+
+    .sidebar-footer {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+      font-size: 0.9rem;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--green);
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 22px;
+    }
+
+    .title-block {
+      max-width: 860px;
+    }
+
+    .eyebrow {
+      color: var(--green);
+      font-weight: 800;
+      letter-spacing: 0;
+      margin: 0 0 8px;
+      font-size: 0.88rem;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3vw, 2.6rem);
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 12px 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 780px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .panel,
+    .item {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .item {
+      padding: 16px;
+    }
+
+    .panel h3,
+    .item h3,
+    .item h4 {
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    .panel h3 {
+      font-size: 1.08rem;
+    }
+
+    .item h4 {
+      font-size: 1rem;
+    }
+
+    .item p,
+    .panel p {
+      line-height: 1.7;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric {
+      min-height: 104px;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      display: grid;
+      align-content: space-between;
+    }
+
+    .metric strong {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .layer-map {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(135px, 1fr));
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .layer {
+      min-height: 124px;
+      border-radius: 8px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      display: grid;
+      align-content: space-between;
+    }
+
+    .layer[data-tone="green"] { background: var(--green-2); }
+    .layer[data-tone="blue"] { background: var(--blue-2); }
+    .layer[data-tone="amber"] { background: var(--amber-2); }
+    .layer[data-tone="violet"] { background: var(--violet-2); }
+    .layer[data-tone="red"] { background: var(--red-2); }
+
+    .layer strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .layer span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      min-height: 30px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.84rem;
+      color: #314139;
+    }
+
+    .pill.approved { background: var(--green-2); border-color: #b8d7c9; }
+    .pill.review { background: var(--amber-2); border-color: #e8c983; }
+    .pill.draft { background: var(--blue-2); border-color: #b7cceb; }
+    .pill.archived { background: var(--red-2); border-color: #e0b6b6; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1.5fr repeat(3, minmax(150px, 0.55fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--ink);
+    }
+
+    textarea {
+      min-height: 190px;
+      resize: vertical;
+      line-height: 1.55;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.88rem;
+    }
+
+    .question {
+      display: grid;
+      gap: 12px;
+    }
+
+    .choices {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .choice {
+      border: 1px solid var(--line);
+      background: #fff;
+      min-height: 42px;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .choice.correct {
+      background: var(--green-2);
+      border-color: #b8d7c9;
+    }
+
+    .choice-index {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      display: inline-grid;
+      place-items: center;
+      font-size: 0.8rem;
+      font-weight: 800;
+      flex: 0 0 24px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .role-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .role-tabs button.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--ink);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: #1f2823;
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      transform: translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.2s ease;
+      max-width: min(420px, calc(100vw - 36px));
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .empty {
+      border: 1px dashed #bfc8c1;
+      border-radius: 8px;
+      min-height: 160px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.52);
+    }
+
+    .module-progress {
+      width: 100%;
+      height: 10px;
+      background: var(--surface-2);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .module-progress span {
+      display: block;
+      height: 100%;
+      width: var(--value);
+      background: linear-gradient(90deg, var(--green), var(--blue));
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+      gap: 16px;
+    }
+
+    .source {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin: 0;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 980px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        height: auto;
+        position: static;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .topbar,
+      .split {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+
+      .toolbar {
+        justify-content: flex-start;
+      }
+
+      .metrics,
+      .grid.cols-3,
+      .grid.cols-2,
+      .filters {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      aside,
+      main {
+        padding: 16px;
+      }
+
+      .nav {
+        grid-template-columns: 1fr;
+      }
+
+      h2 {
+        font-size: 1.55rem;
+      }
+
+      .metric strong {
+        font-size: 1.55rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand">
+        <div class="brand-mark">AI</div>
+        <h1>iPAS AIAP Learning OS x CM</h1>
+        <p>本地 HTML 學習系統，搭配 GAS 雲端內容母體與題庫審核流程。</p>
+      </div>
+
+      <nav class="nav" aria-label="主要功能">
+        <button class="active" data-view="overview"><span class="icon">⌂</span>系統總覽</button>
+        <button data-view="modules"><span class="icon">▦</span>學習模組</button>
+        <button data-view="questions"><span class="icon">?</span>題庫練習</button>
+        <button data-view="news"><span class="icon">↻</span>新聞轉題</button>
+        <button data-view="teacher"><span class="icon">✓</span>老師控管</button>
+        <button data-view="cm"><span class="icon">⇄</span>GAS CM</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div><span class="status-dot"></span><strong>Offline ready</strong></div>
+        <div class="muted" id="versionLabel">Schema v1.0</div>
+        <button class="ghost" id="resetDemoBtn">重置示範資料</button>
+      </div>
+    </aside>
+
+    <main>
+      <section id="view"></section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="application/json" id="seed-data">
+    {
+      "schemaVersion": "1.0",
+      "updatedAt": "2026-04-26T00:00:00.000Z",
+      "modules": [
+        {
+          "id": "module-001",
+          "title": "AI 應用規劃入門",
+          "goal": "理解 AI 專案的起點是問題定義，而不是先選模型。",
+          "topics": ["問題定義", "利害關係人", "成功指標"],
+          "minutes": 25
+        },
+        {
+          "id": "module-002",
+          "title": "資料與模型的關係",
+          "goal": "看懂資料品質、模型能力與應用成效之間的關係。",
+          "topics": ["資料來源", "資料品質", "模型限制"],
+          "minutes": 35
+        },
+        {
+          "id": "module-003",
+          "title": "生成式 AI 應用情境",
+          "goal": "能判斷生成式 AI 適合與不適合的業務場景。",
+          "topics": ["客服", "知識管理", "內容生成", "風險控管"],
+          "minutes": 40
+        },
+        {
+          "id": "module-004",
+          "title": "AI 專案治理與風險",
+          "goal": "理解隱私、偏誤、資安與人類審核在 AI 導入中的角色。",
+          "topics": ["隱私", "偏誤", "資安", "人類審核"],
+          "minutes": 45
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-aiap-001",
+          "subject": "AI 應用規劃",
+          "topic": "需求分析",
+          "difficulty": "easy",
+          "status": "approved",
+          "source": "course",
+          "stem": "企業導入 AI 專案前，最應先確認哪一件事？",
+          "choices": ["模型參數量", "業務問題與成功指標", "GPU 品牌", "介面配色"],
+          "answerIndex": 1,
+          "explanation": "AI 應用規劃的起點是業務問題與可衡量的成功指標。",
+          "tags": ["需求分析", "KPI", "AI 導入"]
+        },
+        {
+          "id": "q-aiap-002",
+          "subject": "資料治理",
+          "topic": "資料品質",
+          "difficulty": "medium",
+          "status": "approved",
+          "source": "course",
+          "stem": "若 AI 客服系統經常回答過時資訊，最可能優先檢查哪個環節？",
+          "choices": ["品牌識別色", "知識庫更新流程", "使用者螢幕尺寸", "公司 Logo 解析度"],
+          "answerIndex": 1,
+          "explanation": "回答過時通常與知識來源、更新週期、檢索資料版本有關。",
+          "tags": ["知識庫", "RAG", "資料維護"]
+        },
+        {
+          "id": "q-aiap-003",
+          "subject": "AI 風險治理",
+          "topic": "人類審核",
+          "difficulty": "medium",
+          "status": "review",
+          "source": "news",
+          "stem": "在高風險 AI 應用中，為什麼需要保留人類審核機制？",
+          "choices": ["讓系統看起來更複雜", "降低錯誤決策直接影響使用者的風險", "提高網頁動畫速度", "取代所有文件管理"],
+          "answerIndex": 1,
+          "explanation": "高風險場景需要可追溯、可介入、可修正的決策流程。",
+          "tags": ["AI 治理", "人類審核", "風險"]
+        }
+      ],
+      "news": [
+        {
+          "id": "news-001",
+          "title": "企業導入生成式 AI 客服系統",
+          "date": "2026-04-26",
+          "source": "news",
+          "summary": "企業將生成式 AI 用於客服知識查詢與回覆建議。",
+          "examObjective": "能判斷生成式 AI 導入客服場景時的效益、限制與風險。",
+          "mappedTopic": "AI 應用情境規劃"
+        },
+        {
+          "id": "news-002",
+          "title": "組織建立 AI 使用政策與資料分級",
+          "date": "2026-04-26",
+          "source": "official-doc",
+          "summary": "組織要求員工依資料敏感度選擇是否可使用 AI 工具。",
+          "examObjective": "能理解資料分級、權限控管與 AI 工具使用政策的關係。",
+          "mappedTopic": "AI 專案治理與風險"
+        }
+      ],
+      "reviewLog": []
+    }
+  </script>
+
+  <script>
+    const seed = JSON.parse(document.getElementById('seed-data').textContent);
+    const storageKey = 'ipas-aiap-learning-os-v1';
+    const viewEl = document.getElementById('view');
+    const toastEl = document.getElementById('toast');
+    const navButtons = [...document.querySelectorAll('.nav button')];
+    let state = loadState();
+    let currentView = 'overview';
+    let activeRole = 'student';
+
+    function loadState() {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return structuredClone(seed);
+
+      try {
+        return JSON.parse(raw);
+      } catch (error) {
+        return structuredClone(seed);
+      }
+    }
+
+    function saveState() {
+      state.updatedAt = new Date().toISOString();
+      localStorage.setItem(storageKey, JSON.stringify(state));
+      document.getElementById('versionLabel').textContent = `Schema v${state.schemaVersion} · ${formatDateTime(state.updatedAt)}`;
+    }
+
+    function showToast(message) {
+      toastEl.textContent = message;
+      toastEl.classList.add('show');
+      window.setTimeout(() => toastEl.classList.remove('show'), 2200);
+    }
+
+    function formatDateTime(value) {
+      return new Intl.DateTimeFormat('zh-TW', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      }).format(new Date(value));
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function difficultyLabel(value) {
+      return {
+        easy: '基礎',
+        medium: '中等',
+        hard: '進階'
+      }[value] || value;
+    }
+
+    function statusLabel(value) {
+      return {
+        draft: '草稿',
+        review: '待審',
+        approved: '已核准',
+        archived: '封存'
+      }[value] || value;
+    }
+
+    function topbar(title, lead, actions = '') {
+      return `
+        <div class="topbar">
+          <div class="title-block">
+            <p class="eyebrow">iPAS AI 應用規劃師</p>
+            <h2>${title}</h2>
+            <p class="lead">${lead}</p>
+          </div>
+          <div class="toolbar">${actions}</div>
+        </div>
+      `;
+    }
+
+    function render() {
+      const renderers = {
+        overview: renderOverview,
+        modules: renderModules,
+        questions: renderQuestions,
+        news: renderNews,
+        teacher: renderTeacher,
+        cm: renderCM
+      };
+
+      viewEl.innerHTML = renderers[currentView]();
+      bindViewEvents();
+      navButtons.forEach(button => button.classList.toggle('active', button.dataset.view === currentView));
+      saveState();
+    }
+
+    function renderOverview() {
+      const approved = state.questions.filter(q => q.status === 'approved').length;
+      const review = state.questions.filter(q => q.status === 'review').length;
+      const progress = getModuleProgress();
+
+      return `
+        ${topbar('Learning OS x CM 系統總覽', '把離線學習、雲端內容母體、新聞轉題與人工審核串成一條可教、可管、可演進的教學流程。',
+          '<button class="primary" data-action="export">匯出 JSON</button><button data-view-jump="questions">開始練題</button>'
+        )}
+
+        <section class="metrics">
+          <div class="metric"><strong>${state.modules.length}</strong><span>課程模組</span></div>
+          <div class="metric"><strong>${state.questions.length}</strong><span>題庫總數</span></div>
+          <div class="metric"><strong>${approved}</strong><span>正式題</span></div>
+          <div class="metric"><strong>${progress}%</strong><span>學習進度</span></div>
+        </section>
+
+        <section class="panel grid">
+          <h3>系統分層</h3>
+          <div class="layer-map">
+            <div class="layer" data-tone="green"><strong>Local HTML</strong><span>學生離線學習、練題、查看解析</span></div>
+            <div class="layer" data-tone="blue"><strong>JSON 題庫</strong><span>讓本地與雲端共用同一份資料語言</span></div>
+            <div class="layer" data-tone="amber"><strong>GAS CM</strong><span>老師與助教維護內容母體</span></div>
+            <div class="layer" data-tone="violet"><strong>AI 新知</strong><span>新聞、官方文件、NotebookLM 摘要</span></div>
+            <div class="layer" data-tone="red"><strong>人工審核</strong><span>AI 輔助產題，但正式內容由人把關</span></div>
+          </div>
+        </section>
+
+        <section class="grid cols-2" style="margin-top:16px">
+          <div class="panel">
+            <h3>三角色作業方式</h3>
+            <div class="role-tabs" style="margin-top:14px">
+              <button class="${activeRole === 'student' ? 'active' : ''}" data-role="student">學生</button>
+              <button class="${activeRole === 'ta' ? 'active' : ''}" data-role="ta">助教</button>
+              <button class="${activeRole === 'teacher' ? 'active' : ''}" data-role="teacher">老師</button>
+            </div>
+            ${renderRole(activeRole)}
+          </div>
+          <div class="panel">
+            <h3>目前審核狀態</h3>
+            <p class="muted">待審題目：${review} 題。正式教學時，待審題不應直接進入正式測驗。</p>
+            <div class="timeline">
+              <div class="step"><div class="step-number">1</div><div><strong>收集素材</strong><p class="source">新聞、官方文件、課堂補充。</p></div></div>
+              <div class="step"><div class="step-number">2</div><div><strong>抽出考點</strong><p class="source">把事件轉成能力指標。</p></div></div>
+              <div class="step"><div class="step-number">3</div><div><strong>形成草稿題</strong><p class="source">AI 可輔助，但需標記來源。</p></div></div>
+              <div class="step"><div class="step-number">4</div><div><strong>人工審核</strong><p class="source">老師核准後才成為正式題。</p></div></div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderRole(role) {
+      const content = {
+        student: {
+          title: '學生：自學與練題',
+          lines: ['依課程模組理解概念', '練習正式題並閱讀解析', '使用匯入 JSON 更新教材']
+        },
+        ta: {
+          title: '助教：整理與轉題',
+          lines: ['整理新聞與官方文件', '抽出考點與對應主題', '建立草稿題並送審']
+        },
+        teacher: {
+          title: '老師：品質控管',
+          lines: ['審核題目正確性與難度', '決定是否符合 iPAS 考科方向', '發布正式題庫版本']
+        }
+      }[role];
+
+      return `
+        <div class="item">
+          <h4>${content.title}</h4>
+          <div class="pill-row">
+            ${content.lines.map(line => `<span class="pill">${line}</span>`).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderModules() {
+      return `
+        ${topbar('學習模組', '每個模組都對應 iPAS AI 應用規劃師需要具備的核心能力。這裡先用小單元建立學習節奏。')}
+        <section class="grid cols-2">
+          ${state.modules.map(module => {
+            const done = Boolean(module.completed);
+            return `
+              <article class="item">
+                <h3>${escapeHtml(module.title)}</h3>
+                <p>${escapeHtml(module.goal)}</p>
+                <div class="pill-row">
+                  ${module.topics.map(topic => `<span class="pill">${escapeHtml(topic)}</span>`).join('')}
+                </div>
+                <p class="source">${module.minutes} 分鐘 · ${done ? '已完成' : '未完成'}</p>
+                <div class="module-progress" aria-hidden="true"><span style="--value:${done ? '100%' : '15%'}"></span></div>
+                <div class="actions" style="margin-top:14px">
+                  <button class="${done ? '' : 'primary'}" data-action="toggle-module" data-id="${module.id}">
+                    ${done ? '標記未完成' : '標記完成'}
+                  </button>
+                </div>
+              </article>
+            `;
+          }).join('')}
+        </section>
+      `;
+    }
+
+    function renderQuestions() {
+      const subjects = unique(state.questions.map(q => q.subject));
+      const topics = unique(state.questions.map(q => q.topic));
+
+      return `
+        ${topbar('題庫練習', '題目保留來源、難度、審核狀態與解析，讓練習本身也能變成教學素材。')}
+        <section class="panel">
+          <div class="filters">
+            <input id="questionSearch" placeholder="搜尋題幹、解析或標籤">
+            <select id="subjectFilter">
+              <option value="">全部考科</option>
+              ${subjects.map(subject => `<option value="${escapeHtml(subject)}">${escapeHtml(subject)}</option>`).join('')}
+            </select>
+            <select id="topicFilter">
+              <option value="">全部主題</option>
+              ${topics.map(topic => `<option value="${escapeHtml(topic)}">${escapeHtml(topic)}</option>`).join('')}
+            </select>
+            <select id="statusFilter">
+              <option value="">全部狀態</option>
+              <option value="approved">已核准</option>
+              <option value="review">待審</option>
+              <option value="draft">草稿</option>
+              <option value="archived">封存</option>
+            </select>
+          </div>
+          <div id="questionList" class="grid"></div>
+        </section>
+      `;
+    }
+
+    function renderQuestionList() {
+      const search = document.getElementById('questionSearch')?.value.trim().toLowerCase() || '';
+      const subject = document.getElementById('subjectFilter')?.value || '';
+      const topic = document.getElementById('topicFilter')?.value || '';
+      const status = document.getElementById('statusFilter')?.value || '';
+
+      const filtered = state.questions.filter(question => {
+        const haystack = [
+          question.stem,
+          question.explanation,
+          question.subject,
+          question.topic,
+          ...(question.tags || [])
+        ].join(' ').toLowerCase();
+
+        return (!search || haystack.includes(search)) &&
+          (!subject || question.subject === subject) &&
+          (!topic || question.topic === topic) &&
+          (!status || question.status === status);
+      });
+
+      const listEl = document.getElementById('questionList');
+      if (!listEl) return;
+
+      if (!filtered.length) {
+        listEl.innerHTML = '<div class="empty">沒有符合條件的題目。</div>';
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(question => `
+        <article class="item question">
+          <div>
+            <div class="pill-row" style="margin-top:0">
+              <span class="pill ${question.status}">${statusLabel(question.status)}</span>
+              <span class="pill">${difficultyLabel(question.difficulty)}</span>
+              <span class="pill">${escapeHtml(question.subject)}</span>
+              <span class="pill">${escapeHtml(question.topic)}</span>
+            </div>
+            <h3 style="margin-top:12px">${escapeHtml(question.stem)}</h3>
+          </div>
+          <ul class="choices" data-question="${question.id}">
+            ${question.choices.map((choice, index) => `
+              <li class="choice" data-index="${index}">
+                <span class="choice-index">${String.fromCharCode(65 + index)}</span>
+                <span>${escapeHtml(choice)}</span>
+              </li>
+            `).join('')}
+          </ul>
+          <div class="explanation hidden" id="exp-${question.id}">
+            <strong>解析</strong>
+            <p>${escapeHtml(question.explanation)}</p>
+          </div>
+          <div class="pill-row">
+            ${(question.tags || []).map(tag => `<span class="pill">${escapeHtml(tag)}</span>`).join('')}
+          </div>
+          <div class="actions">
+            <button data-action="show-answer" data-id="${question.id}">顯示答案</button>
+            ${question.status !== 'approved' ? `<button class="primary" data-action="approve" data-id="${question.id}">核准題目</button>` : ''}
+            <button data-action="archive" data-id="${question.id}">封存</button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function renderNews() {
+      return `
+        ${topbar('新聞轉題', '新聞是素材，不是考題。系統會先把事件抽象成能力指標，再形成等待審核的題目草稿。')}
+        <section class="split">
+          <div class="grid">
+            ${state.news.map(item => `
+              <article class="item">
+                <p class="source">${escapeHtml(item.date)} · ${escapeHtml(item.source)}</p>
+                <h3>${escapeHtml(item.title)}</h3>
+                <p>${escapeHtml(item.summary)}</p>
+                <div class="pill-row">
+                  <span class="pill">${escapeHtml(item.mappedTopic)}</span>
+                  <span class="pill">${escapeHtml(item.examObjective)}</span>
+                </div>
+                <div class="actions" style="margin-top:14px">
+                  <button class="primary" data-action="draft-from-news" data-id="${item.id}">產生草稿題</button>
+                </div>
+              </article>
+            `).join('')}
+          </div>
+
+          <div class="panel">
+            <h3>轉題流程</h3>
+            <div class="timeline" style="margin-top:14px">
+              <div class="step"><div class="step-number">1</div><div><strong>新聞事件</strong><p class="source">保留日期與來源。</p></div></div>
+              <div class="step"><div class="step-number">2</div><div><strong>學習目標</strong><p class="source">從事件抽出可考能力。</p></div></div>
+              <div class="step"><div class="step-number">3</div><div><strong>題目草稿</strong><p class="source">AI 或助教可建立初稿。</p></div></div>
+              <div class="step"><div class="step-number">4</div><div><strong>老師審核</strong><p class="source">核准後進正式題庫。</p></div></div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderTeacher() {
+      const reviewItems = state.questions.filter(q => q.status === 'review' || q.status === 'draft');
+
+      return `
+        ${topbar('老師控管', '這裡集中處理待審題、匯入匯出與版本更新，確保 AI 輔助內容不會跳過人的品質判斷。',
+          '<button class="primary" data-action="export">匯出題庫 JSON</button>'
+        )}
+        <section class="grid cols-2">
+          <div class="panel">
+            <h3>待審清單</h3>
+            <div class="grid" style="margin-top:14px">
+              ${reviewItems.length ? reviewItems.map(question => `
+                <article class="item">
+                  <div class="pill-row" style="margin-top:0">
+                    <span class="pill ${question.status}">${statusLabel(question.status)}</span>
+                    <span class="pill">${escapeHtml(question.topic)}</span>
+                  </div>
+                  <h4 style="margin-top:12px">${escapeHtml(question.stem)}</h4>
+                  <p>${escapeHtml(question.explanation)}</p>
+                  <div class="actions">
+                    <button class="primary" data-action="approve" data-id="${question.id}">核准</button>
+                    <button data-action="archive" data-id="${question.id}">封存</button>
+                  </div>
+                </article>
+              `).join('') : '<div class="empty">目前沒有待審題目。</div>'}
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>匯入 JSON</h3>
+            <p class="muted">可貼上 GAS CM 匯出的 payload，或貼上本工具先前匯出的 JSON。</p>
+            <textarea id="importText" placeholder='{"schemaVersion":"1.0","modules":[],"questions":[],"news":[]}'></textarea>
+            <div class="actions" style="margin-top:10px">
+              <button class="warning" data-action="import">匯入並覆蓋本地資料</button>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderCM() {
+      return `
+        ${topbar('GAS CM', 'Google Apps Script 可作為雲端內容母體，負責保存正式內容，並把新版 JSON 發布給學生端。')}
+        <section class="grid cols-2">
+          <div class="panel">
+            <h3>CM 同步設定</h3>
+            <p class="muted">部署 GAS Web App 後，把 URL 貼在這裡即可測試送出目前資料。</p>
+            <input id="gasEndpoint" placeholder="https://script.google.com/macros/s/.../exec" value="${escapeHtml(localStorage.getItem('ipas-gas-endpoint') || '')}">
+            <div class="actions" style="margin-top:12px">
+              <button class="primary" data-action="push-gas">送出到 GAS</button>
+              <button data-action="export">下載 JSON</button>
+            </div>
+            <p class="source" id="gasStatus" style="margin-top:12px">尚未同步。</p>
+          </div>
+
+          <div class="panel">
+            <h3>建議的 Google Sheet 分頁</h3>
+            <div class="pill-row">
+              <span class="pill">modules</span>
+              <span class="pill">questions</span>
+              <span class="pill">news</span>
+              <span class="pill">reviewLog</span>
+            </div>
+            <p class="muted">每個分頁第一列是欄位名稱。陣列或物件欄位會以 JSON 字串保存。</p>
+          </div>
+        </section>
+      `;
+    }
+
+    function bindViewEvents() {
+      document.querySelectorAll('[data-action="export"]').forEach(button => {
+        button.addEventListener('click', exportState);
+      });
+
+      document.querySelectorAll('[data-action="toggle-module"]').forEach(button => {
+        button.addEventListener('click', () => {
+          const module = state.modules.find(item => item.id === button.dataset.id);
+          module.completed = !module.completed;
+          showToast(module.completed ? '已標記完成。' : '已標記未完成。');
+          render();
+        });
+      });
+
+      document.querySelectorAll('[data-role]').forEach(button => {
+        button.addEventListener('click', () => {
+          activeRole = button.dataset.role;
+          render();
+        });
+      });
+
+      document.querySelectorAll('[data-view-jump]').forEach(button => {
+        button.addEventListener('click', () => {
+          currentView = button.dataset.viewJump;
+          render();
+        });
+      });
+
+      document.querySelectorAll('[data-action="show-answer"]').forEach(button => {
+        button.addEventListener('click', () => showAnswer(button.dataset.id));
+      });
+
+      document.querySelectorAll('[data-action="approve"]').forEach(button => {
+        button.addEventListener('click', () => updateQuestionStatus(button.dataset.id, 'approved'));
+      });
+
+      document.querySelectorAll('[data-action="archive"]').forEach(button => {
+        button.addEventListener('click', () => updateQuestionStatus(button.dataset.id, 'archived'));
+      });
+
+      document.querySelectorAll('[data-action="draft-from-news"]').forEach(button => {
+        button.addEventListener('click', () => draftFromNews(button.dataset.id));
+      });
+
+      document.querySelectorAll('[data-action="import"]').forEach(button => {
+        button.addEventListener('click', importState);
+      });
+
+      document.querySelectorAll('[data-action="push-gas"]').forEach(button => {
+        button.addEventListener('click', pushToGas);
+      });
+
+      ['questionSearch', 'subjectFilter', 'topicFilter', 'statusFilter'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) input.addEventListener('input', renderQuestionList);
+      });
+
+      renderQuestionList();
+    }
+
+    function showAnswer(questionId) {
+      const question = state.questions.find(item => item.id === questionId);
+      const list = document.querySelector(`[data-question="${questionId}"]`);
+      if (!question || !list) return;
+
+      [...list.children].forEach(choice => {
+        choice.classList.toggle('correct', Number(choice.dataset.index) === question.answerIndex);
+      });
+
+      document.getElementById(`exp-${questionId}`)?.classList.remove('hidden');
+    }
+
+    function updateQuestionStatus(questionId, status) {
+      const question = state.questions.find(item => item.id === questionId);
+      if (!question) return;
+
+      question.status = status;
+      state.reviewLog.push({
+        questionId,
+        status,
+        at: new Date().toISOString()
+      });
+
+      showToast(`題目已更新為「${statusLabel(status)}」。`);
+      render();
+    }
+
+    function draftFromNews(newsId) {
+      const item = state.news.find(news => news.id === newsId);
+      if (!item) return;
+
+      const id = `q-news-${Date.now()}`;
+      state.questions.push({
+        id,
+        subject: 'AI 應用規劃',
+        topic: item.mappedTopic,
+        difficulty: 'medium',
+        status: 'review',
+        source: item.source,
+        stem: `根據「${item.title}」，下列哪一項最符合 AI 應用規劃師應關注的重點？`,
+        choices: [
+          '先確認業務目標、資料條件與風險控管',
+          '先決定使用哪一種動畫效果',
+          '只比較硬體品牌，不需要需求分析',
+          '讓 AI 自動決定所有組織政策'
+        ],
+        answerIndex: 0,
+        explanation: item.examObjective,
+        tags: ['新聞轉題', item.mappedTopic, '待審']
+      });
+
+      showToast('已產生待審草稿題。');
+      currentView = 'teacher';
+      render();
+    }
+
+    function exportState() {
+      saveState();
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `ipas-aiap-learning-os-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      showToast('已匯出 JSON。');
+    }
+
+    function importState() {
+      const raw = document.getElementById('importText')?.value.trim();
+      if (!raw) {
+        showToast('請先貼上 JSON。');
+        return;
+      }
+
+      try {
+        const next = JSON.parse(raw);
+        if (!next.schemaVersion || !Array.isArray(next.questions)) {
+          throw new Error('Invalid payload');
+        }
+
+        state = {
+          schemaVersion: next.schemaVersion,
+          updatedAt: new Date().toISOString(),
+          modules: next.modules || [],
+          questions: next.questions || [],
+          news: next.news || [],
+          reviewLog: next.reviewLog || []
+        };
+
+        showToast('已匯入本地資料。');
+        render();
+      } catch (error) {
+        showToast('JSON 格式不正確，請檢查資料契約。');
+      }
+    }
+
+    async function pushToGas() {
+      const input = document.getElementById('gasEndpoint');
+      const status = document.getElementById('gasStatus');
+      const endpoint = input?.value.trim();
+
+      if (!endpoint) {
+        showToast('請先填入 GAS Web App URL。');
+        return;
+      }
+
+      localStorage.setItem('ipas-gas-endpoint', endpoint);
+      status.textContent = '同步中...';
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: JSON.stringify(state)
+        });
+
+        const text = await response.text();
+        status.textContent = `GAS 回應：${text.slice(0, 180)}`;
+        showToast('已送出到 GAS。');
+      } catch (error) {
+        status.textContent = '同步失敗。若從 file:// 開啟時遇到限制，請改用下載 JSON 後由 CM 匯入。';
+        showToast('同步失敗，請檢查 URL 或 CORS 設定。');
+      }
+    }
+
+    function getModuleProgress() {
+      if (!state.modules.length) return 0;
+      const completed = state.modules.filter(module => module.completed).length;
+      return Math.round((completed / state.modules.length) * 100);
+    }
+
+    function unique(values) {
+      return [...new Set(values.filter(Boolean))];
+    }
+
+    navButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        currentView = button.dataset.view;
+        render();
+      });
+    });
+
+    document.getElementById('resetDemoBtn').addEventListener('click', () => {
+      state = structuredClone(seed);
+      localStorage.removeItem(storageKey);
+      showToast('已重置示範資料。');
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

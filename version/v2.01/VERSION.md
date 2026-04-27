@@ -1,6 +1,6 @@
 # 版本說明：v2.01
 
-版本日期：2026/04/27
+更新時間：update 2026/4/26
 
 這份版本是 v1.01 備份後整理出的免費版發布版本。
 
@@ -28,19 +28,19 @@ v2.01 的目標是讓「iPAS AI應用規劃師 輔助小天使免費版」從單
 Google Sheet 編輯／檢視連結：
 
 ```text
-https://docs.google.com/spreadsheets/d/1Gc3tRwERo0kMgUYQqfP747-3IoaN8yiTXPlsSIhComo/edit?usp=sharing
+https://docs.google.com/spreadsheets/d/1nf0A9v_ftNUFTZ54L5ewDUqLFkh6WqPAqM1N2PQmDRA/edit?usp=sharing
 ```
 
 程式實際讀取的 CSV 匯出連結：
 
 ```text
-https://docs.google.com/spreadsheets/d/1Gc3tRwERo0kMgUYQqfP747-3IoaN8yiTXPlsSIhComo/export?format=csv
+https://docs.google.com/spreadsheets/d/1nf0A9v_ftNUFTZ54L5ewDUqLFkh6WqPAqM1N2PQmDRA/export?format=csv
 ```
 
 Google Sheet ID：
 
 ```text
-1Gc3tRwERo0kMgUYQqfP747-3IoaN8yiTXPlsSIhComo
+1nf0A9v_ftNUFTZ54L5ewDUqLFkh6WqPAqM1N2PQmDRA
 ```
 
 ## 目前資料狀態
