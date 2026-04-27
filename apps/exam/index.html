@@ -1416,10 +1416,11 @@
             <div class="stat-grid">
                 <div class="form-group" style="margin:0;">
                     <label>排序</label>
-                    <select id="browse-order" onchange="app.filterBrowseData(true)">
-                        <option value="seq">順序</option>
-                        <option value="rand">隨機</option>
-                    </select>
+                    <input type="hidden" id="browse-order" value="seq">
+                    <div class="order-actions" aria-label="題庫排序">
+                        <button class="order-btn active" type="button" data-browse-order="seq" onclick="app.setBrowseOrder('seq')">順序</button>
+                        <button class="order-btn" type="button" data-browse-order="rand" onclick="app.setBrowseOrder('rand')">隨機</button>
+                    </div>
                 </div>
                 <div class="form-group" style="margin:0; display:flex; align-items:center;">
                    <label style="margin:0; cursor: pointer;">
@@ -1608,7 +1609,6 @@
             <div id="result-breakdown"></div>
 
             <div style="margin-top: 24px; gap: 10px; display: grid;">
-                <button class="btn btn-dark-outline btn-block" onclick="app.printResults()">列印 / 存為 PDF</button>
                 <button class="btn btn-primary btn-block" onclick="app.switchMode('setup')">重新測驗</button>
                 <button class="btn btn-outline btn-block" onclick="app.switchMode('browse')">回到題庫</button>
             </div>
@@ -2176,6 +2176,16 @@ const app = {
         document.querySelectorAll('[data-exam-order]').forEach(button => {
             button.classList.toggle('active', button.dataset.examOrder === order);
         });
+    },
+
+    setBrowseOrder: function(order) {
+        const input = document.getElementById('browse-order');
+        if (!input) return;
+        input.value = order;
+        document.querySelectorAll('[data-browse-order]').forEach(button => {
+            button.classList.toggle('active', button.dataset.browseOrder === order);
+        });
+        this.filterBrowseData(true);
     },
 
     escapeHtml: function(value) {
